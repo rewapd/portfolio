@@ -58,7 +58,10 @@
       "name": "Technical Lead",
       "company": "Accenture Solutions Pvt Ltd",
       "period": "Apr 2026-Present",
-      "stack": [],
+      "stack": [
+        "Windchill",
+        "Java"
+      ],
       "description": "Custom Wizard creation.",
       "achievements": [
         "Custom Wizard creation.",
@@ -148,7 +151,11 @@
       "name": "Robotics Process Automation",
       "company": "Infosys Ltd",
       "period": "Jan 2019-June 2022",
-      "stack": [],
+      "stack": [
+        "Kofax RPA",
+        "Microsoft Graph API",
+        "Splunk"
+      ],
       "description": "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
       "achievements": [
         "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
@@ -164,7 +171,13 @@
       "name": "Java Developer",
       "company": "Infosys Ltd",
       "period": "Feb 2016-Dec 2019",
-      "stack": [],
+      "stack": [
+        "Java",
+        "Nuxeo",
+        "Hadoop",
+        "Hortonworks",
+        "Jenkins"
+      ],
       "description": "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process.",
       "achievements": [
         "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process.",

@@ -180,9 +180,9 @@ function App() {
       )}
 
       {project.stack.length > 0 && (
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-3" aria-label={`${project.name} technology stack`}>
           {project.stack.map((tag) => (
-            <span key={tag} className="rounded-full border border-violet-400/30 bg-violet-500/10 px-2.5 py-1 text-xs text-violet-100">
+            <span key={tag} className="rounded-full border border-violet-400/45 bg-indigo-400/10 px-5 py-2 text-base text-slate-100">
               {tag}
             </span>
           ))}
