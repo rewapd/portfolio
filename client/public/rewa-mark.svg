@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="frame" x1="8" y1="7" x2="57" y2="59" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A78BFA"/>
+      <stop offset=".52" stop-color="#818CF8"/>
+      <stop offset="1" stop-color="#67E8F9"/>
+    </linearGradient>
+    <linearGradient id="letters" x1="18" y1="17" x2="47" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff"/>
+      <stop offset="1" stop-color="#C4B5FD"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="19" fill="#080B1B"/>
+  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="18.25" stroke="url(#frame)" stroke-opacity=".78" stroke-width="1.5"/>
+  <path d="M20 46V19h11.4c6.1 0 9.6 3.2 9.6 8.2 0 4.1-2.3 6.8-6.3 7.7L43 46h-8.6l-7.4-10h-.2v10H20Zm6.8-15.2h4.1c2.2 0 3.3-.9 3.3-2.6 0-1.8-1.1-2.7-3.3-2.7h-4.1v5.3Z" fill="url(#letters)"/>
+  <path d="M38.7 46V19h6.8v10.1h1.1c5.1 0 8.3 2.8 8.3 7.5s-3.2 7.5-8.3 7.5h-7.9Zm6.8-5.5h1.3c1.1 0 1.7-.7 1.7-1.9s-.6-1.9-1.7-1.9h-1.3v3.8Z" fill="url(#frame)"/>
+</svg>
