@@ -54,6 +54,8 @@ jobs:
         run: python scripts/sync_resume_projects.py
 
       - name: Build portfolio
+        env:
+          VITE_PROFILE_VERSION: ${{ github.sha }}
         run: npm --prefix client run build
 
       - name: Upload static site

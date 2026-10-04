@@ -38,7 +38,13 @@ function App() {
       'Explore Rewa Prasad’s software development portfolio: Windchill, React, Java, enterprise workflows, and automation.'
     );
 
-    fetch(`${import.meta.env.BASE_URL}profile.json`)
+    const profileUrl = new URL(`${import.meta.env.BASE_URL}profile.json`, window.location.href);
+    profileUrl.searchParams.set(
+      'v',
+      import.meta.env.VITE_PROFILE_VERSION || String(Date.now())
+    );
+
+    fetch(profileUrl)
       .then((res) => {
         if (!res.ok) throw new Error(`Profile request failed (${res.status})`);
         return res.json();
