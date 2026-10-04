@@ -491,6 +491,10 @@ class ResumeProjectParsingTests(unittest.TestCase):
                 "○ Worked on OIR, lifecycle, document, product templates, Acls.",
                 "SKILLS Frontend Javascript, React.js, HTML, CSS Backend Java, SpringBoot DataBase SQL Tools Windchill",
                 "CERTIFICATION Udemy Certified- Java DS & Algo AWARDS Innovation Superstar Award",
+                "○",
+                "Developed custom user picker for global attributes.",
+                "○",
+                "Worked with existing utilities for creating users, groups and roles.",
                 "● Robotics Process Automation [Infosys Ltd] [Jan 2019-June 2022]",
                 "○ Built and maintained automation workflows.",
             ]
@@ -502,7 +506,11 @@ class ResumeProjectParsingTests(unittest.TestCase):
         )
         self.assertEqual(
             projects[0]["achievements"],
-            ["Worked on OIR, lifecycle, document, product templates, Acls."],
+            [
+                "Worked on OIR, lifecycle, document, product templates, Acls.",
+                "Developed custom user picker for global attributes.",
+                "Worked with existing utilities for creating users, groups and roles.",
+            ],
         )
         self.assertEqual(
             projects[1]["achievements"],

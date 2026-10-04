@@ -91,7 +91,18 @@
         "Implementation of part classification and document classification.",
         "Managed Types and Attributes, Lifecycles, Export/Import Utilities.",
         "Developed custom validators and data Utility (Customization) for generating dropdown values at runtime.",
-        "Worked on OIR, lifecycle, document, product templates, Acls."
+        "Worked on OIR, lifecycle, document, product templates, Acls.",
+        "Developed custom user picker for global attributes.",
+        "Worked with existing utilities(windchill loaders) for creating users, groups and roles.",
+        "Used Git for version control and Jira, Azure Boards, and Rally for tracking tasks.",
+        "Developed user interface (Dashboard) for the data validation utility before loading data (PDMLoader) to Windchill using React.js.",
+        "Validation based on the datatype of the attributes with their internal name in windchill and actions like create or update mode.",
+        "Created REST APIs in the controller to be consumed for the user interface..",
+        "Implemented file upload (max file size upto 300MB) to the interface (input file).",
+        "Implemented form and file validation for processing in the backend server.",
+        "Generated report after processing of all the files which can be downloaded from the interface as a zip file.",
+        "State management using useContext and useState hook.",
+        "Developed Dashboard to showcase the reports such as success, failure and scope of the files process based on the certain business logic."
       ]
     },
     {

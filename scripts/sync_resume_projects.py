@@ -120,6 +120,8 @@ def parse_project_section(lines):
                 and not top_level.group(1).lower().startswith("personal projects")
             ):
                 in_non_project_section = False
+            elif bullet and not bullet.group(1).strip():
+                in_non_project_section = False
             else:
                 continue
 
