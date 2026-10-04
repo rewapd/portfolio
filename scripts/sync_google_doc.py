@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 import os
 import re
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
-SYNC_PARSER_VERSION = 3
+SYNC_PARSER_VERSION = 4
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
@@ -121,6 +122,16 @@ def flatten_document_content(content):
 
 def clean_line(line):
     return re.sub(r"\s+", " ", INVISIBLE.sub("", line)).strip()
+
+
+def document_change_token(document):
+    revision_id = document.get("revisionId")
+    if revision_id:
+        return f"revision:{revision_id}"
+    serialized = json.dumps(
+        document, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return f"sha256:{hashlib.sha256(serialized).hexdigest()}"
 
 
 def section_heading(line):
@@ -619,13 +630,11 @@ def main():
 
     session = make_session(service_account_json)
     document = fetch_google_doc(session, document_id)
-    revision_id = document.get("revisionId")
-    if not revision_id:
-        raise ValueError("Google Docs API response did not include a revision ID.")
+    change_token = document_change_token(document)
     if SYNC_STATE_PATH.is_file():
         previous_state = json.loads(SYNC_STATE_PATH.read_text(encoding="utf-8"))
         if (
-            previous_state.get("revisionId") == revision_id
+            previous_state.get("changeToken") == change_token
             and previous_state.get("parserVersion") == SYNC_PARSER_VERSION
             and PROFILE_PATH.is_file()
             and RESUME_PATH.is_file()
@@ -646,7 +655,7 @@ def main():
     write_atomically(PROFILE_PATH, profile_data)
     state_data = (
         json.dumps(
-            {"revisionId": revision_id, "parserVersion": SYNC_PARSER_VERSION}
+            {"changeToken": change_token, "parserVersion": SYNC_PARSER_VERSION}
         )
         + "\n"
     ).encode("utf-8")

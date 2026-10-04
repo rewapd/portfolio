@@ -7,10 +7,31 @@ from unittest.mock import patch
 
 from scripts import sync_google_doc
 from scripts.sync_resume_projects import merge_projects, parse_project_section
-from scripts.sync_google_doc import extract_profile, extract_projects
+from scripts.sync_google_doc import (
+    document_change_token,
+    extract_profile,
+    extract_projects,
+)
 
 
 class ResumeProjectParsingTests(unittest.TestCase):
+    def test_document_change_token_uses_revision_or_content_hash(self):
+        self.assertEqual(
+            document_change_token({"revisionId": "rev-123", "body": {}}),
+            "revision:rev-123",
+        )
+        first = document_change_token({"body": {"content": [{"text": "first"}]}})
+        unchanged = document_change_token(
+            {"body": {"content": [{"text": "first"}]}}
+        )
+        updated = document_change_token(
+            {"body": {"content": [{"text": "updated"}]}}
+        )
+
+        self.assertTrue(first.startswith("sha256:"))
+        self.assertEqual(first, unchanged)
+        self.assertNotEqual(first, updated)
+
     def test_extracts_all_supported_portfolio_sections_from_google_docs(self):
         content = [
             ("Name: Rewa Updated", False),
@@ -279,7 +300,7 @@ class ResumeProjectParsingTests(unittest.TestCase):
             state_path.write_text(
                 json.dumps(
                     {
-                        "revisionId": "revision-1",
+                        "changeToken": "revision:revision-1",
                         "parserVersion": sync_google_doc.SYNC_PARSER_VERSION,
                     }
                 ),
@@ -309,6 +330,54 @@ class ResumeProjectParsingTests(unittest.TestCase):
 
             export_pdf.assert_not_called()
             self.assertEqual(resume_path.read_bytes(), b"%PDF-existing")
+
+    def test_skips_export_when_revision_is_missing_and_content_is_unchanged(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            profile_path = root / "profile.json"
+            resume_path = root / "resume.pdf"
+            state_path = root / "sync-state.json"
+            document = {
+                "body": {
+                    "content": [
+                        {"paragraph": {"elements": [{"textRun": {"content": "Resume"}}]}}
+                    ]
+                }
+            }
+            profile_path.write_text('{"projects": []}\n', encoding="utf-8")
+            resume_path.write_bytes(b"%PDF-existing")
+            state_path.write_text(
+                json.dumps(
+                    {
+                        "changeToken": sync_google_doc.document_change_token(document),
+                        "parserVersion": sync_google_doc.SYNC_PARSER_VERSION,
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with patch.dict(
+                os.environ,
+                {
+                    "GOOGLE_DOC_ID": "document-id",
+                    "GOOGLE_SERVICE_ACCOUNT_JSON": "service-account-json",
+                },
+            ), patch.object(
+                sync_google_doc, "PROFILE_PATH", profile_path
+            ), patch.object(
+                sync_google_doc, "RESUME_PATH", resume_path
+            ), patch.object(
+                sync_google_doc, "SYNC_STATE_PATH", state_path
+            ), patch.object(
+                sync_google_doc, "make_session"
+            ), patch.object(
+                sync_google_doc, "fetch_google_doc", return_value=document
+            ), patch.object(
+                sync_google_doc, "fetch_google_doc_pdf"
+            ) as export_pdf:
+                sync_google_doc.main()
+
+            export_pdf.assert_not_called()
 
 
 if __name__ == "__main__":
