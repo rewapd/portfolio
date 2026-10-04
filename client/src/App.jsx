@@ -255,7 +255,7 @@ function App() {
                 <div className="relative z-10 flex h-full items-center justify-center px-6 pt-8">
                   <div className="relative rounded-[2rem] bg-gradient-to-br from-violet-400 via-cyan-300 to-violet-600 p-[2px] shadow-[0_20px_70px_rgba(76,29,149,0.65)]">
                     <img
-                      src="/rewa-prasad.jpg"
+                      src={`${baseUrl}rewa-prasad.jpg`}
                       alt="Rewa Prasad"
                       className="h-[340px] w-[270px] rounded-[calc(2rem-2px)] object-cover object-top"
                     />
