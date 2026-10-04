@@ -23,4 +23,6 @@ The Vite config automatically uses the repository subpath for project sites and 
 
 ## Update portfolio content
 
-Edit `client/public/profile.json` for the visible profile data. Replace the portrait and resume in `client/public` when updating those files.
+Replace `client/public/Rewa-Prasad-Resume.pdf` with the updated resume and push it to `main`. The GitHub Pages workflow extracts the `PROJECTS` section, regenerates the portfolio project cards, and deploys the updated site automatically. Keep project entries under a `PROJECTS` heading in the PDF; numbered entries such as `#1: Project Name — https://...` are recognized as separate projects.
+
+Existing profile details are in `client/public/profile.json`. Run `npm run sync:resume` after replacing the PDF to regenerate project cards locally; Python 3 and the packages in `requirements.txt` must be installed first.

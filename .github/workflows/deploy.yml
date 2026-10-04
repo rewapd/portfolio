@@ -31,6 +31,17 @@ jobs:
           cache: npm
           cache-dependency-path: client/package-lock.json
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install resume parser
+        run: python -m pip install -r requirements.txt
+
+      - name: Test resume project extraction
+        run: python -m unittest discover -s tests
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
         with:
@@ -38,6 +49,9 @@ jobs:
 
       - name: Install frontend dependencies
         run: npm ci --prefix client
+
+      - name: Generate projects from resume
+        run: python scripts/sync_resume_projects.py
 
       - name: Build portfolio
         run: npm --prefix client run build

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "build": "npm --prefix client run build",
+    "sync:resume": "python3 scripts/sync_resume_projects.py",
     "server": "npm --prefix server run dev",
     "client": "npm --prefix client run dev"
   },

@@ -62,7 +62,7 @@
     {
       "name": "Windchill Developer",
       "company": "Tata Consultancy Services Ltd",
-      "period": "Jul 2022 - Present",
+      "period": "Jul 2022-Present",
       "stack": [
         "Windchill",
         "React.js",
@@ -71,10 +71,24 @@
       ],
       "description": "Enterprise manufacturing platform development focused on document control, part classification, lifecycle workflows, ACL management, and custom utility dashboards.",
       "achievements": [
-        "Implemented change management design, custom workflows, and lifecycle templates for manufacturing operations.",
-        "Managed types, attributes, lifecycle states, export/import utilities, and document/product templates.",
-        "Developed runtime-driven dropdown generation, custom global attribute pickers, and validation dashboards for bulk data loading.",
-        "Created REST APIs and backend logic to support UI-driven validation of large files with ZIP report generation."
+        "Collaboration with Solution Architect and business analysts to gather requirements.",
+        "Understanding of PDMLink, PartsLink, Windchill Customization, Document Management, Integration with ERP(Oracle Fusion).",
+        "Implemented Change Management design, built new workflows for change notice, change activity along with custom change object templates and task form templates.",
+        "Implementation of part classification and document classification.",
+        "Managed Types and Attributes, Lifecycles, Export/Import Utilities.",
+        "Developed custom validators and data Utility (Customization) for generating dropdown values at runtime.",
+        "Worked on OIR, lifecycle, document, product templates, Acls.",
+        "Developed custom user picker for global attributes.",
+        "Worked with existing utilities(windchill loaders) for creating users, groups and roles.",
+        "Used Git for version control and Jira, Azure Boards, and Rally for tracking tasks.",
+        "Developed user interface (Dashboard) for the data validation utility before loading data (PDMLoader) to Windchill using React.js.",
+        "Validation based on the datatype of the attributes with their internal name in windchill and actions like create or update mode.",
+        "Created REST APIs in the controller to be consumed for the user interface..",
+        "Implemented file upload (max file size upto 300MB) to the interface (input file).",
+        "Implemented form validation for checkbox and file validation for processing in the backend server.",
+        "Generated report after processing of all the files which can be downloaded from the interface as a zip file.",
+        "State management using useContext and useState hook.",
+        "Developed Dashboard to showcase the reports such as success, failure and scope of the files process based on the certain business logic. SKILLS Frontend Javascript, React.js, HTML, CSS Backend Java, SpringBoot DataBase SQL Tools Windchill, Eclipse, IntelliJ Idea, VsCode, STS, Jenkins, ServiceNow, Splunk, Jira, Azure Boards, GitHub, Kofax TotalAgility, Kofax Kapow (Kofax RPA) CERTIFICATION Udemy Certified- Java DS & Algo Udemy Certified- React.js Microsoft Azure Fundamentals Infosys Certified Agile Developer Infosys Certified DevOps Professional Microsoft Azure AI Fundamentals AWARDS Innovation Superstar Award For outstanding contribution Insta award For quickly taking up issues and taking additional responsibilities within the team Table Tennis Tournament Secured 1st position LANGUAGES Hindi, English"
       ]
     },
     {
@@ -82,13 +96,13 @@
       "link": "https://rewapd.github.io/usePopCorn/",
       "stack": [
         "JavaScript",
-        "React.js",
-        "LocalStorage"
+        "React.js"
       ],
       "description": "Movie discovery application with search, ratings, watched list management, and persistent user state.",
       "achievements": [
-        "Built search and watchlist flows using custom hooks, state management, and fetch-based API consumption.",
-        "Included rating and removal actions to create a clean user-driven movie dashboard."
+        "Implemented movie search application.",
+        "Features : search movie, add to watched list, rate the movie, remove watched movie.",
+        "Concepts: localStorage api,useState, useEffect, custom hooks, fetch API"
       ]
     },
     {
@@ -96,28 +110,61 @@
       "link": "https://forkify-rewa.netlify.app/",
       "stack": [
         "JavaScript",
-        "MVC",
-        "LocalStorage"
+        "React.js"
       ],
       "description": "Recipe discovery platform offering search, bookmarks, ingredient adjustment, and paginated browsing.",
       "achievements": [
-        "Implemented model-view-controller design to structure recipe search and state updates.",
-        "Added bookmark persistence, dynamic ingredient scaling, and asynchronous data handling with fetch APIs."
+        "Implemented recipe search application.",
+        "Features : search recipe, show ingredients, add or subtract servings and ingredients will be adjusted accordingly, bookmarks recipe, handling pagination for recipe list.",
+        "Concepts: MVC architecture JS, localStorage API, eventListners, DOM manipulation, Promises, async/await, fetch API"
       ]
     },
     {
       "name": "FastPizza",
       "link": "https://pizzafast-co.netlify.app/",
       "stack": [
-        "React.js",
-        "React Router",
-        "Redux",
-        "Tailwind CSS"
+        "JavaScript",
+        "React.js"
       ],
       "description": "Pizza ordering interface with cart, quantity controls, geolocation-based order flow, and checkout experience.",
       "achievements": [
-        "Built a modern storefront flow with cart management, quantity updates, and order form handling.",
-        "Integrated Redux state control and geolocation-driven UX, plus a polished UI with Tailwind styling."
+        "Implemented pizza ordering application.",
+        "Features : add/remove pizza to cart, increment/decrement quantity, open cart, clear cart, form details for order, address details",
+        "Concepts: react-router-dom, redux.js, fetch API, geolocation API, useDispatch, useSelector, tailwind css"
+      ]
+    },
+    {
+      "name": "Robotics Process Automation",
+      "company": "Infosys Ltd",
+      "period": "Jan 2019-June 2022",
+      "stack": [],
+      "description": "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
+      "achievements": [
+        "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
+        "Coordinated and worked with Business analysts at client location (Amsterdam).",
+        "Developed and optimized robots with interaction of APIs to connect applications such as Outlook mailbox (Microsoft Graph API).",
+        "Performing load tests to ensure optimal utilization of available resources with respect to tool and server to ensure good performance of software robots without causing any interruption and damage.",
+        "Managing, analyzing and providing solutions for incidents and problems with respect to software robots to ensure minimal impact on business processes. Carrying out regular root cause analysis to identify and mitigate commonly occurring issues.",
+        "Creating Splunk dashboards to monitor the performance of robots as well as finding issues.",
+        "Worked in an Agile environment and actively volunteered as Scrum master to facilitate smooth working of Scrum team. • Strong understanding of DevOps practice within RPA capabilities."
+      ]
+    },
+    {
+      "name": "Java Developer",
+      "company": "Infosys Ltd",
+      "period": "Feb 2016-Dec 2019",
+      "stack": [],
+      "description": "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process. Environment: Coding done in STS in combination of CICD with Jenkins, SONAR and HP-fortify. Team working and Hierarchy: Worked as a Developer to Extract, and transform the documents to enable loading in the New System, in the Scrum team of 7 members. Extraction of metadata mails, chat and Fax and Storing the same in Hadoop and Nuxeo. Coding with Nuxeo API to store metadata Transforming the documents to enable storage in the backend system Loading Scripts for the execution of Loader in the new System Responsible for Code base lining and build using Nexus repository and Jenkins. Responsible for code build and deployment of releases.",
+      "achievements": [
+        "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process.",
+        "Environment: Coding done in STS in combination of CICD with Jenkins, SONAR and HP-fortify.",
+        "Team working and Hierarchy: Worked as a Developer to Extract, and transform the documents to enable loading in the New System, in the Scrum team of 7 members.",
+        "Extraction of metadata mails, chat and Fax and Storing the same in Hadoop and Nuxeo.",
+        "Coding with Nuxeo API to store metadata",
+        "Transforming the documents to enable storage in the backend system",
+        "Loading Scripts for the execution of Loader in the new System",
+        "Responsible for Code base lining and build using Nexus repository and Jenkins.",
+        "Responsible for code build and deployment of releases."
       ]
     }
   ],
