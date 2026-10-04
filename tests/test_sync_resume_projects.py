@@ -32,6 +32,71 @@ class ResumeProjectParsingTests(unittest.TestCase):
         self.assertEqual(first, unchanged)
         self.assertNotEqual(first, updated)
 
+    def test_keeps_table_columns_separate_when_extracting_projects_and_skills(self):
+        def paragraph(text, bullet=False):
+            return {
+                "paragraph": {
+                    **({"bullet": {"nestingLevel": 0}} if bullet else {}),
+                    "elements": [{"textRun": {"content": text + "\n"}}],
+                }
+            }
+
+        document = {
+            "body": {
+                "content": [
+                    {
+                        "table": {
+                            "tableRows": [
+                                {
+                                    "tableCells": [
+                                        {
+                                            "content": [
+                                                paragraph("PROJECTS"),
+                                                paragraph("● Alpha [Example Ltd] — Platform"),
+                                                paragraph("○ Built a platform."),
+                                            ]
+                                        },
+                                        {
+                                            "content": [
+                                                paragraph("SKILLS"),
+                                                paragraph("Frontend"),
+                                                paragraph("JavaScript, React.js"),
+                                                paragraph("Backend"),
+                                                paragraph("Node.js"),
+                                                paragraph("Database"),
+                                                paragraph("PostgreSQL"),
+                                                paragraph("Tools"),
+                                                paragraph("GitHub, Docker, Kofax RPA"),
+                                            ]
+                                        },
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+
+        projects = extract_projects(document)
+        profile = extract_profile(
+            document,
+            {"projects": [], "skills": {}, "metrics": []},
+            projects,
+        )
+
+        self.assertEqual([project["name"] for project in projects], ["Alpha"])
+        self.assertEqual(projects[0]["achievements"], ["Built a platform."])
+        self.assertEqual(
+            profile["skills"],
+            {
+                "frontend": ["JavaScript", "React.js"],
+                "backend": ["Node.js"],
+                "database": ["PostgreSQL"],
+                "tools": ["GitHub", "Docker", "Kofax RPA"],
+            },
+        )
+
     def test_extracts_all_supported_portfolio_sections_from_google_docs(self):
         content = [
             ("Name: Rewa Updated", False),
@@ -43,7 +108,9 @@ class ResumeProjectParsingTests(unittest.TestCase):
             ("SUMMARY", False),
             ("Platform Engineer with 8 years of experience.", False),
             ("EXPERIENCE", False),
-            ("Acme Ltd — Senior Engineer Jan 2020 - Present", True),
+            ("Acme Ltd, Pune — Senior Engineer", True),
+            ("Jan 2020 - Present", False),
+            ("Software Developer", False),
             ("Led delivery of scalable services.", True),
             ("PROJECTS", False),
             ("Project Alpha [Acme Ltd] [Jan 2024-Present]", True),
@@ -128,6 +195,12 @@ class ResumeProjectParsingTests(unittest.TestCase):
         self.assertEqual(profile["education"][0]["degree"], "B.Tech")
         self.assertEqual(profile["experiences"][0]["company"], "Acme Ltd")
         self.assertEqual(profile["experiences"][0]["role"], "Senior Engineer")
+        self.assertEqual(profile["experiences"][0]["location"], "Pune")
+        self.assertEqual(profile["experiences"][0]["type"], "Software Developer")
+        self.assertEqual(
+            profile["experiences"][0]["highlights"],
+            ["Led delivery of scalable services."],
+        )
         self.assertEqual(profile["projects"][0]["name"], "Project Alpha")
         self.assertEqual(
             profile["projects"][0]["description"],

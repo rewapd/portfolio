@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
-SYNC_PARSER_VERSION = 4
+SYNC_PARSER_VERSION = 5
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
@@ -120,6 +120,48 @@ def flatten_document_content(content):
     return [clean_line(line) for line in lines if clean_line(line)]
 
 
+def flatten_document_regions(content):
+    regions = []
+    current = []
+    for element in content:
+        paragraph = element.get("paragraph")
+        if paragraph:
+            text = "".join(
+                run.get("textRun", {}).get("content", "")
+                for run in paragraph.get("elements", [])
+            )
+            bullet = paragraph.get("bullet")
+            if bullet and text.strip():
+                level = bullet.get("nestingLevel", 0)
+                marker = "● " if level == 0 else "○ "
+                text = marker + text.lstrip()
+            current.extend(clean_line(line) for line in text.splitlines() if clean_line(line))
+            continue
+
+        nested_content = None
+        table = element.get("table")
+        if table:
+            nested_content = [
+                cell.get("content", [])
+                for row in table.get("tableRows", [])
+                for cell in row.get("tableCells", [])
+            ]
+        table_of_contents = element.get("tableOfContents")
+        if table_of_contents:
+            nested_content = [table_of_contents.get("content", [])]
+
+        if nested_content is not None:
+            if current:
+                regions.append(current)
+                current = []
+            for child_content in nested_content:
+                regions.extend(flatten_document_regions(child_content))
+
+    if current:
+        regions.append(current)
+    return regions
+
+
 def clean_line(line):
     return re.sub(r"\s+", " ", INVISIBLE.sub("", line)).strip()
 
@@ -186,6 +228,15 @@ def split_sections(lines):
     return sections
 
 
+def document_sections(document):
+    sections = {}
+    content = document.get("body", {}).get("content", [])
+    for region in flatten_document_regions(content):
+        for section, lines in split_sections(region).items():
+            sections.setdefault(section, []).extend(lines)
+    return sections
+
+
 def content_lines(lines):
     return [
         clean_line(re.sub(r"^[●•○◦o]\s*", "", line))
@@ -195,9 +246,7 @@ def content_lines(lines):
 
 
 def extract_projects(document):
-    lines = flatten_document_content(document.get("body", {}).get("content", []))
-    sections = split_sections(lines)
-    project_lines = sections.get("projects", [])
+    project_lines = document_sections(document).get("projects", [])
     if not project_lines:
         raise ValueError("Could not find a PROJECTS heading in the Google Doc.")
 
@@ -220,37 +269,71 @@ def split_values(lines):
 
 def extract_skills(lines):
     groups = {}
-    for line in lines:
-        matches = list(
-            re.finditer(
-                r"(?i)(?<!\w)(Front\s*end|Back\s*end|Database|Databases|Tools?|RPA|Automation)\s*:?",
-                line,
-            )
+    aliases = {
+        "frontend": "frontend",
+        "front end": "frontend",
+        "backend": "backend",
+        "back end": "backend",
+        "database": "database",
+        "databases": "database",
+        "tools": "tools",
+        "tool": "tools",
+        "rpa": "rpa",
+        "automation": "rpa",
+    }
+    label_pattern = re.compile(
+        r"(?i)(?<![\w])Front\s*end|Back\s*end|Databases?|Tools?|Automation(?![\w])"
+    )
+    active_group = None
+
+    def add_values(group, value):
+        values = re.split(r"\s*[,;/]\s*", clean_line(value).strip(" :-"))
+        groups.setdefault(group, []).extend(
+            clean_line(item).strip(" .")
+            for item in values
+            if clean_line(item).strip(" .")
         )
-        if not matches:
+
+    for line in lines:
+        value = clean_line(re.sub(r"^[●•○◦o]\s*", "", line))
+        matches = list(label_pattern.finditer(value))
+        if len(value.split()) == 1 and value.lower().rstrip(":") in aliases:
+            active_group = aliases[value.lower().rstrip(":")]
+            groups.setdefault(active_group, [])
             continue
+        if not matches:
+            if active_group:
+                add_values(active_group, value)
+            elif value:
+                groups.setdefault("general", []).extend(
+                    item.strip(" .")
+                    for item in re.split(r"\s*[,;/]\s*", value)
+                    if item.strip(" .")
+                )
+            continue
+
+        prefix = value[: matches[0].start()].strip(" :-")
+        if prefix and active_group:
+            add_values(active_group, prefix)
         for index, match in enumerate(matches):
-            label = re.sub(r"\s+", " ", match.group(1).lower())
-            group = SKILL_GROUPS.get(label)
+            alias = re.sub(r"\s+", " ", match.group(0).lower())
+            group = aliases.get(alias)
             if not group:
                 continue
-            end = matches[index + 1].start() if index + 1 < len(matches) else len(line)
-            values = re.split(r"\s*[,;/]\s*", line[match.end() : end])
-            groups.setdefault(group, []).extend(
-                clean_line(value).strip(" .")
-                for value in values
-                if clean_line(value).strip(" .")
-            )
+            end = matches[index + 1].start() if index + 1 < len(matches) else len(value)
+            add_values(group, value[match.end() : end])
+            active_group = group
 
-    if not groups:
-        values = split_values(lines)
-        if values:
-            groups["general"] = values
-    return {
+    skills = {
         group: list(dict.fromkeys(items))
         for group, items in groups.items()
         if items
     }
+    if set(skills) <= {"general"}:
+        values = split_values(lines)
+        if values:
+            skills = {"general": values}
+    return skills
 
 
 def extract_education(lines):
@@ -334,6 +417,11 @@ def extract_experiences(lines, projects):
                 "highlights": [],
             }
             remainder = value[company_match.end() :].strip(" -|,")
+            if "—" in remainder or "–" in remainder:
+                location, role = re.split(r"\s*[—–]\s*", remainder, maxsplit=1)
+                current["location"] = location.strip(" ,")
+                current["role"] = role.strip(" ,")
+                remainder = ""
             date_match = DATE_RANGE.search(remainder)
             if date_match:
                 current["duration"] = date_match.group(0)
@@ -356,6 +444,13 @@ def extract_experiences(lines, projects):
                 current["role"] = role
         elif re.match(r"^(?:Location|Based in)\s*:", value, re.I):
             current["location"] = value.split(":", 1)[1].strip()
+        elif re.fullmatch(
+            r"(?:Software Developer|RPA Developer|Java Developer|"
+            r"Windchill Developer|Technical Lead)",
+            value,
+            re.I,
+        ):
+            current["type"] = value
         elif value:
             current["highlights"].append(value)
     finish()
@@ -388,7 +483,7 @@ def extract_experiences(lines, projects):
 
 def extract_profile(document, existing, projects):
     lines = flatten_document_content(document.get("body", {}).get("content", []))
-    sections = split_sections(lines)
+    sections = document_sections(document)
     result = dict(existing)
 
     header = []
