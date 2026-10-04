@@ -490,10 +490,15 @@ function App() {
               <h2 className="text-2xl font-semibold text-white">Awards</h2>
             </div>
             <ul className="space-y-3 text-slate-300">
-              {profile.awards.map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="mt-2 h-2 w-2 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500" />
-                  <span>{item}</span>
+              {profile.awards.map((award) => (
+                <li key={award.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500" />
+                    <div>
+                      <h3 className="font-semibold text-white">{award.title}</h3>
+                      {award.description && <p className="mt-1 text-sm leading-6 text-slate-400">{award.description}</p>}
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>

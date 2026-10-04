@@ -20,7 +20,7 @@
     },
     {
       "label": "Certifications",
-      "value": "5"
+      "value": "6"
     },
     {
       "label": "Focus",
@@ -213,16 +213,23 @@
     "Udemy Certified- Java DS & Algo",
     "Udemy Certified- React.js",
     "Microsoft Azure Fundamentals",
-    "Infosys Certified Agile Developer Infosys Certified DevOps Professional",
+    "Infosys Certified Agile Developer",
+    "Infosys Certified DevOps Professional",
     "Microsoft Azure AI Fundamentals"
   ],
   "awards": [
-    "Innovation Superstar Award",
-    "For outstanding contribution",
-    "Insta award",
-    "For quickly taking up issues and taking additional responsibilities within the team",
-    "Table Tennis Tournament",
-    "Secured 1st position"
+    {
+      "title": "Innovation Superstar Award",
+      "description": "For outstanding contribution"
+    },
+    {
+      "title": "Insta award",
+      "description": "For quickly taking up issues and taking additional responsibilities within the team"
+    },
+    {
+      "title": "Table Tennis Tournament",
+      "description": "Secured 1st position"
+    }
   ],
   "education": [
     {

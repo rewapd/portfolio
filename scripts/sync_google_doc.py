@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
-SYNC_PARSER_VERSION = 6
+SYNC_PARSER_VERSION = 7
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
@@ -294,6 +294,83 @@ def split_values(lines):
             if clean_line(value).strip(" ,;")
         )
     return values
+
+
+def extract_certifications(lines):
+    certification_start = re.compile(
+        r"(?=\b(?:Udemy Certified|Microsoft(?: Azure| Certified)|Infosys Certified)\b)",
+        re.IGNORECASE,
+    )
+    certifications = []
+    for value in split_values(lines):
+        certifications.extend(
+            item.strip(" ,;")
+            for item in certification_start.split(value)
+            if item.strip(" ,;")
+        )
+    return list(dict.fromkeys(certifications))
+
+
+def extract_awards(lines):
+    awards = []
+    current = None
+    description_start = re.compile(
+        r"^(?:for\b|secured\b|recognized\b|in recognition\b|awarded\b|"
+        r"received\b|won\b|selected\b|contributed\b)",
+        re.IGNORECASE,
+    )
+    description_continuation = re.compile(
+        r"^(?:and|or|within|with|through|to|by|as|at|on|from|of|the)\b",
+        re.IGNORECASE,
+    )
+
+    def start_award(title):
+        return {"title": title, "description": ""}
+
+    def finish():
+        if current and current["title"]:
+            awards.append(current)
+
+    for line in lines:
+        value = clean_line(line)
+        if not value:
+            continue
+
+        bullet = re.match(r"^([●•○◦o])\s*(.*)$", value)
+        if bullet:
+            marker, value = bullet.groups()
+            if marker in {"●", "•"}:
+                finish()
+                current = start_award(value)
+            elif current:
+                current["description"] = clean_line(
+                    f'{current["description"]} {value}'
+                )
+            elif value:
+                current = start_award(value)
+            continue
+
+        if current is None:
+            current = start_award(value)
+        elif current["description"] and (
+            re.search(r"\b(?:award|tournament|medal|recognition|prize|champion)\b", value, re.I)
+            or (
+                not description_start.match(value)
+                and not description_continuation.match(value)
+                and not value[0].islower()
+            )
+        ):
+            finish()
+            current = start_award(value)
+        elif not current["description"]:
+            current["description"] = value
+        else:
+            current["description"] = clean_line(
+                f'{current["description"]} {value}'
+            )
+
+    finish()
+    return awards
 
 
 def extract_skills(lines):
@@ -643,11 +720,11 @@ def extract_profile(document, existing, projects):
         if skills:
             result["skills"] = skills
     if sections.get("certifications"):
-        certifications = split_values(sections["certifications"])
+        certifications = extract_certifications(sections["certifications"])
         if certifications:
             result["certifications"] = certifications
     if sections.get("awards"):
-        awards = split_values(sections["awards"])
+        awards = extract_awards(sections["awards"])
         if awards:
             result["awards"] = awards
     if sections.get("languages"):

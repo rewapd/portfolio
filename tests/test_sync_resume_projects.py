@@ -11,6 +11,8 @@ from scripts import sync_google_doc
 from scripts.sync_resume_projects import merge_projects, parse_project_section
 from scripts.sync_google_doc import (
     document_change_token,
+    extract_awards,
+    extract_certifications,
     extract_education,
     extract_profile,
     extract_projects,
@@ -107,6 +109,61 @@ class ResumeProjectParsingTests(unittest.TestCase):
         self.assertTrue(first.startswith("sha256:"))
         self.assertEqual(first, unchanged)
         self.assertNotEqual(first, updated)
+
+    def test_extracts_certifications_when_two_titles_share_a_line(self):
+        certifications = extract_certifications(
+            [
+                "Udemy Certified- Java DS & Algo",
+                "Udemy Certified- React.js",
+                "Microsoft Azure Fundamentals",
+                "Infosys Certified Agile Developer Infosys Certified DevOps Professional",
+                "Microsoft Azure AI Fundamentals",
+            ]
+        )
+
+        self.assertEqual(
+            certifications,
+            [
+                "Udemy Certified- Java DS & Algo",
+                "Udemy Certified- React.js",
+                "Microsoft Azure Fundamentals",
+                "Infosys Certified Agile Developer",
+                "Infosys Certified DevOps Professional",
+                "Microsoft Azure AI Fundamentals",
+            ],
+        )
+
+    def test_groups_award_explanations_under_their_award_titles(self):
+        awards = extract_awards(
+            [
+                "Innovation Superstar Award",
+                "For outstanding contribution",
+                "Insta award",
+                "For quickly taking up issues and",
+                "taking additional responsibilities",
+                "within the team",
+                "Table Tennis Tournament",
+                "Secured 1st position",
+            ]
+        )
+
+        self.assertEqual(
+            awards,
+            [
+                {
+                    "title": "Innovation Superstar Award",
+                    "description": "For outstanding contribution",
+                },
+                {
+                    "title": "Insta award",
+                    "description": "For quickly taking up issues and taking additional responsibilities within the team",
+                },
+                {
+                    "title": "Table Tennis Tournament",
+                    "description": "Secured 1st position",
+                },
+            ],
+        )
 
     def test_keeps_table_columns_separate_when_extracting_projects_and_skills(self):
         def paragraph(text, bullet=False):
@@ -265,7 +322,10 @@ class ResumeProjectParsingTests(unittest.TestCase):
         )
         self.assertEqual(profile["skills"]["database"], ["PostgreSQL"])
         self.assertEqual(profile["certifications"], ["Cloud Architecture"])
-        self.assertEqual(profile["awards"], ["Engineering Excellence"])
+        self.assertEqual(
+            profile["awards"],
+            [{"title": "Engineering Excellence", "description": ""}],
+        )
         self.assertEqual(profile["languages"], ["English", "Hindi"])
         self.assertEqual(profile["education"][0]["school"], "Example University, Pune")
         self.assertEqual(profile["education"][0]["degree"], "B.Tech")
