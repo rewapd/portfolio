@@ -4,72 +4,89 @@
   "headline": "Product-minded software developer specializing in Windchill customization, enterprise workflow automation, and modern web interfaces.",
   "summary": "Software Developer with 9+ years of experience designing, developing, and deploying enterprise solutions across manufacturing, banking, and automation domains. Skilled in Windchill customization, Java, Spring Boot, React, and RPA implementations with a strong focus on user experience, process optimization, and scalable delivery.",
   "contact": {
-    "location": "Megapolis Serenity, Hinjewadi Phase 3, Pune - 411057",
-    "phone": "+91 7063470203",
+    "location": "Pune - 411057",
+    "phone": "653397",
     "email": "rewa104@gmail.com",
     "linkedin": "https://www.linkedin.com/in/rewa-prasad-653397a3/"
   },
   "metrics": [
     {
       "label": "Experience",
-      "value": "9+ Years"
+      "value": "9+ years"
     },
     {
       "label": "Core Stack",
-      "value": "Windchill, React, Java"
+      "value": ")"
     },
     {
       "label": "Certifications",
-      "value": "6"
+      "value": "5"
     },
     {
       "label": "Focus",
-      "value": "Enterprise Systems"
+      "value": "Software Developer"
     }
   ],
   "experiences": [
     {
-      "company": "Tata Consultancy Services",
-      "location": "Pune",
-      "role": "Assistant Consultant",
-      "duration": "July 2022 - Present",
-      "type": "Software Developer",
+      "company": "Accenture Solutions Pvt Ltd",
+      "location": "",
+      "role": "Pune — Technical Lead",
+      "duration": "Apr 2026 - PRESENT",
+      "type": "",
       "highlights": [
-        "Collaborated with solution architects and business analysts to gather requirements and translate them into technical design and implementation.",
-        "Worked extensively with PDMLink, PartsLink, Windchill customization, document management, and Oracle Fusion integrations.",
-        "Implemented change management workflows for change notices, change activities, and custom change object templates.",
-        "Developed custom validators, user pickers, data utilities, and lifecycle rules to streamline manufacturing data processing.",
-        "Built a React.js dashboard for PDMLoader validation with upload handling, business-rule checks, file processing, and downloadable ZIP reports.",
-        "Used Git, Jira, Azure Boards, and Rally for sprint and task tracking."
+        "Software Developer"
+      ]
+    },
+    {
+      "company": "Tata Consultancy Services",
+      "location": "",
+      "role": "Pune — Assistant Consultant",
+      "duration": "July 2022 - Mar 2026",
+      "type": "",
+      "highlights": [
+        "Software Developer"
       ]
     },
     {
       "company": "Infosys Ltd",
-      "location": "Mysore, Amsterdam",
-      "role": "Senior Associate Consultant",
+      "location": "",
+      "role": "Mysore, Amsterdam — Senior Associate Consultant",
       "duration": "Feb 2016 - June 2022",
-      "type": "RPA Developer",
+      "type": "",
       "highlights": [
-        "Built and optimized Kofax RPA robots for banking processes, integrating with Outlook mailbox via Microsoft Graph API and business applications.",
-        "Created Splunk dashboards to monitor robot performance, incidents, and production issues, enabling smarter operational responses.",
-        "Carried out load testing and root-cause analysis to ensure high performance and minimal disruption to business processes.",
-        "Worked in Agile ceremonies and acted as Scrum Master to improve team coordination and delivery flow.",
-        "Developed Java modules for archive communication and document retention using Nuxeo, Hadoop, and related backend services."
+        "RPA Developer"
       ]
     }
   ],
   "projects": [
     {
+      "name": "Technical Lead",
+      "company": "Accenture Solutions Pvt Ltd",
+      "period": "Apr 2026-Present",
+      "stack": [],
+      "description": "Custom Wizard creation.",
+      "achievements": [
+        "Custom Wizard creation.",
+        "Implemented form processor, table builder.",
+        "Worked on the MPMLink module.",
+        "Knowledge of process plans, operations.",
+        "Implemented Change Management design, built new workflows for change notice, change activity along with custom change object templates and task form templates.",
+        "Managed Types and Attributes, Lifecycles, Export/Import Utilities.",
+        "Developed custom validators and data Utility (Customization) for generating dropdown values at runtime."
+      ]
+    },
+    {
       "name": "Windchill Developer",
       "company": "Tata Consultancy Services Ltd",
-      "period": "Jul 2022-Present",
+      "period": "Jul 2022-Mar 2026",
       "stack": [
         "Windchill",
         "React.js",
         "Java",
         "Oracle Fusion"
       ],
-      "description": "Enterprise manufacturing platform development focused on document control, part classification, lifecycle workflows, ACL management, and custom utility dashboards.",
+      "description": "Collaboration with Solution Architect and business analysts to gather requirements.",
       "achievements": [
         "Collaboration with Solution Architect and business analysts to gather requirements.",
         "Understanding of PDMLink, PartsLink, Windchill Customization, Document Management, Integration with ERP(Oracle Fusion).",
@@ -85,159 +102,82 @@
         "Validation based on the datatype of the attributes with their internal name in windchill and actions like create or update mode.",
         "Created REST APIs in the controller to be consumed for the user interface..",
         "Implemented file upload (max file size upto 300MB) to the interface (input file).",
-        "Implemented form validation for checkbox and file validation for processing in the backend server.",
+        "Implemented form and file validation for processing in the backend server.",
         "Generated report after processing of all the files which can be downloaded from the interface as a zip file.",
         "State management using useContext and useState hook.",
-        "Developed Dashboard to showcase the reports such as success, failure and scope of the files process based on the certain business logic. SKILLS Frontend Javascript, React.js, HTML, CSS Backend Java, SpringBoot DataBase SQL Tools Windchill, Eclipse, IntelliJ Idea, VsCode, STS, Jenkins, ServiceNow, Splunk, Jira, Azure Boards, GitHub, Kofax TotalAgility, Kofax Kapow (Kofax RPA) CERTIFICATION Udemy Certified- Java DS & Algo Udemy Certified- React.js Microsoft Azure Fundamentals Infosys Certified Agile Developer Infosys Certified DevOps Professional Microsoft Azure AI Fundamentals AWARDS Innovation Superstar Award For outstanding contribution Insta award For quickly taking up issues and taking additional responsibilities within the team Table Tennis Tournament Secured 1st position LANGUAGES Hindi, English"
-      ]
-    },
-    {
-      "name": "usePopCorn",
-      "link": "https://rewapd.github.io/usePopCorn/",
-      "stack": [
-        "JavaScript",
-        "React.js"
-      ],
-      "description": "Movie discovery application with search, ratings, watched list management, and persistent user state.",
-      "achievements": [
-        "Implemented movie search application.",
-        "Features : search movie, add to watched list, rate the movie, remove watched movie.",
-        "Concepts: localStorage api,useState, useEffect, custom hooks, fetch API"
-      ]
-    },
-    {
-      "name": "Forkify",
-      "link": "https://forkify-rewa.netlify.app/",
-      "stack": [
-        "JavaScript",
-        "React.js"
-      ],
-      "description": "Recipe discovery platform offering search, bookmarks, ingredient adjustment, and paginated browsing.",
-      "achievements": [
-        "Implemented recipe search application.",
-        "Features : search recipe, show ingredients, add or subtract servings and ingredients will be adjusted accordingly, bookmarks recipe, handling pagination for recipe list.",
-        "Concepts: MVC architecture JS, localStorage API, eventListners, DOM manipulation, Promises, async/await, fetch API"
-      ]
-    },
-    {
-      "name": "FastPizza",
-      "link": "https://pizzafast-co.netlify.app/",
-      "stack": [
-        "JavaScript",
-        "React.js"
-      ],
-      "description": "Pizza ordering interface with cart, quantity controls, geolocation-based order flow, and checkout experience.",
-      "achievements": [
-        "Implemented pizza ordering application.",
-        "Features : add/remove pizza to cart, increment/decrement quantity, open cart, clear cart, form details for order, address details",
-        "Concepts: react-router-dom, redux.js, fetch API, geolocation API, useDispatch, useSelector, tailwind css"
-      ]
-    },
-    {
-      "name": "Robotics Process Automation",
-      "company": "Infosys Ltd",
-      "period": "Jan 2019-June 2022",
-      "stack": [],
-      "description": "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
-      "achievements": [
-        "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
-        "Coordinated and worked with Business analysts at client location (Amsterdam).",
-        "Developed and optimized robots with interaction of APIs to connect applications such as Outlook mailbox (Microsoft Graph API).",
-        "Performing load tests to ensure optimal utilization of available resources with respect to tool and server to ensure good performance of software robots without causing any interruption and damage.",
-        "Managing, analyzing and providing solutions for incidents and problems with respect to software robots to ensure minimal impact on business processes. Carrying out regular root cause analysis to identify and mitigate commonly occurring issues.",
-        "Creating Splunk dashboards to monitor the performance of robots as well as finding issues.",
-        "Worked in an Agile environment and actively volunteered as Scrum master to facilitate smooth working of Scrum team. • Strong understanding of DevOps practice within RPA capabilities."
-      ]
-    },
-    {
-      "name": "Java Developer",
-      "company": "Infosys Ltd",
-      "period": "Feb 2016-Dec 2019",
-      "stack": [],
-      "description": "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process. Environment: Coding done in STS in combination of CICD with Jenkins, SONAR and HP-fortify. Team working and Hierarchy: Worked as a Developer to Extract, and transform the documents to enable loading in the New System, in the Scrum team of 7 members. Extraction of metadata mails, chat and Fax and Storing the same in Hadoop and Nuxeo. Coding with Nuxeo API to store metadata Transforming the documents to enable storage in the backend system Loading Scripts for the execution of Loader in the new System Responsible for Code base lining and build using Nexus repository and Jenkins. Responsible for code build and deployment of releases.",
-      "achievements": [
-        "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process.",
-        "Environment: Coding done in STS in combination of CICD with Jenkins, SONAR and HP-fortify.",
-        "Team working and Hierarchy: Worked as a Developer to Extract, and transform the documents to enable loading in the New System, in the Scrum team of 7 members.",
-        "Extraction of metadata mails, chat and Fax and Storing the same in Hadoop and Nuxeo.",
-        "Coding with Nuxeo API to store metadata",
-        "Transforming the documents to enable storage in the backend system",
-        "Loading Scripts for the execution of Loader in the new System",
-        "Responsible for Code base lining and build using Nexus repository and Jenkins.",
-        "Responsible for code build and deployment of releases."
+        "Developed Dashboard to showcase the reports such as success, failure and scope of the files process based on the certain business logic."
       ]
     }
   ],
   "skills": {
-    "frontend": [
-      "JavaScript",
-      "React.js",
-      "HTML",
-      "CSS"
-    ],
-    "backend": [
-      "Java",
-      "Spring Boot"
-    ],
-    "database": [
-      "SQL"
-    ],
-    "tools": [
-      "Windchill",
-      "Eclipse",
-      "IntelliJ IDEA",
-      "VS Code",
-      "STS",
-      "Jenkins",
-      "ServiceNow",
-      "Splunk",
-      "Jira",
-      "Azure Boards",
-      "GitHub",
-      "Kofax TotalAgility",
-      "Kofax Kapow"
-    ],
     "rpa": [
-      "Kofax RPA",
-      "Automation Design",
-      "Performance Monitoring"
+      ")"
     ]
   },
   "certifications": [
-    "Udemy Certified - Java DS & Algo",
-    "Udemy Certified - React.js",
+    "Udemy Certified- Java DS & Algo",
+    "Udemy Certified- React.js",
     "Microsoft Azure Fundamentals",
-    "Infosys Certified Agile Developer",
-    "Infosys Certified DevOps Professional",
+    "Infosys Certified Agile Developer Infosys Certified DevOps Professional",
     "Microsoft Azure AI Fundamentals"
   ],
   "awards": [
-    "Innovation Superstar Award - For outstanding contribution",
-    "Insta Award - For quickly taking up issues and additional responsibilities",
-    "Table Tennis Tournament - Secured 1st position"
+    "Innovation Superstar Award",
+    "For outstanding contribution",
+    "Insta award",
+    "For quickly taking up issues and taking additional responsibilities within the team",
+    "Table Tennis Tournament",
+    "Secured 1st position"
   ],
   "education": [
     {
-      "school": "Haldia Institute of Technology, Haldia",
-      "degree": "B.Tech",
-      "field": "Instrumentation and Control Engineering",
+      "school": "Haldia Institute of Technology, Haldia — B.Tech",
       "period": "July 2011 - June 2015",
+      "field": "Instrumentation and Control Engineering",
       "gpa": "GPA: 8.40/10"
     },
     {
-      "school": "Mother Khazani Convent School, Delhi",
-      "degree": "Higher Secondary",
-      "field": "Physics, Chemistry and Maths",
-      "period": "April 2009 - March 2011"
+      "school": "Mother Khazani Convent School, Delhi — Higher Secondary",
+      "period": "April 2009 - March 2011",
+      "field": "Physics,Chemistry and Maths"
     },
     {
-      "school": "JawaharLal Nehru Memorial Senior Secondary School, Dhanbad",
-      "degree": "Senior Secondary",
+      "school": "JawaharLal Nehru Memorial Senior Secondary School, Dhanbad — Senior Secondary",
       "period": "April 2008 - March 2009"
     }
   ],
   "languages": [
-    "Hindi",
-    "English"
+    "Hindi, English",
+    "Personal Projects [JavaScript, React.js]",
+    "#1 : usePopCorn – https://rewapd.github.io/usePopCorn/ (Please use Desktop view for best experience)",
+    "Implemented movie search application.",
+    "Features : search movie, add to watched list, rate the movie, remove watched movie.",
+    "Concepts: localStorage api,useState, useEffect, custom hooks, fetch API",
+    "#2 : Forkify – https://forkify-rewa.netlify.app/ (Please use Desktop view for best experience)",
+    "Implemented recipe search application.",
+    "Features : search recipe, show ingredients, add or subtract servings and ingredients will be adjusted accordingly, bookmarks recipe, handling pagination for recipe list.",
+    "Concepts: MVC architecture JS, localStorage API, eventListners, DOM manipulation, Promises, async/await, fetch API",
+    "#3 : FastPizza – https://pizzafast-co.netlify.app/ (Please use Desktop view for best experience)",
+    "Implemented pizza ordering application.",
+    "Features : add/remove pizza to cart, increment/decrement quantity, open cart, clear cart, form details for order, address details",
+    "Concepts: react-router-dom, redux.js, fetch API, geolocation API, useDispatch, useSelector, tailwind css",
+    "Robotics Process Automation[Infosys Ltd] — Banking [Jan 2019-June 2022]",
+    "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
+    "Coordinated and worked with Business analysts at client location (Amsterdam).",
+    "Developed and optimized robots with interaction of APIs to connect applications such as Outlook mailbox (Microsoft Graph API).",
+    "Performing load tests to ensure optimal utilization of available resources with respect to tool and server to ensure good performance of software robots without causing any interruption and damage.",
+    "Managing, analyzing and providing solutions for incidents and problems with respect to software robots to ensure minimal impact on business processes. Carrying out regular root cause analysis to identify and mitigate commonly occurring issues.",
+    "Creating Splunk dashboards to monitor the performance of robots as well as finding issues.",
+    "Worked in an Agile environment and actively volunteered as Scrum master to facilitate smooth working of Scrum team. • Strong understanding of DevOps practice within RPA capabilities.",
+    "Java Developer [Infosys Ltd] — Banking [Feb 2016-Dec 2019]",
+    "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process.",
+    "Environment: Coding done in STS in combination of CICD with Jenkins, SONAR and HP-fortify.",
+    "Team working and Hierarchy: Worked as a Developer to Extract, and transform the documents to enable loading in the New System, in the Scrum team of 7 members.",
+    "Extraction of metadata mails, chat and Fax and Storing the same in Hadoop and Nuxeo.",
+    "Coding with Nuxeo API to store metadata",
+    "Transforming the documents to enable storage in the backend system",
+    "Loading Scripts for the execution of Loader in the new System",
+    "Responsible for Code base lining and build using Nexus repository and Jenkins.",
+    "Responsible for code build and deployment of releases."
   ]
 }
