@@ -12,6 +12,23 @@ ROOT = Path(__file__).resolve().parents[1]
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 PROFILE_PATH = ROOT / "client/public/profile.json"
 PROJECTS_START = {"PROJECTS", "PROJECTS & EXPERIENCE", "PROJECT EXPERIENCE"}
+NON_PROJECT_SECTION_HEADINGS = (
+    "TECHNICAL SKILLS",
+    "CERTIFICATIONS",
+    "CERTIFICATION",
+    "LANGUAGES",
+    "EDUCATION",
+    "EXPERIENCE",
+    "SKILLS",
+    "AWARDS",
+    "SUMMARY",
+    "PROFILE",
+)
+NON_PROJECT_SECTION_PATTERN = re.compile(
+    r"\b(?:"
+    + "|".join(re.escape(heading) for heading in NON_PROJECT_SECTION_HEADINGS)
+    + r")\b"
+)
 INVISIBLE = re.compile(r"[\u200b-\u200f\ufeff]")
 RESUME_URL = re.compile(r"https?://[^\s)]+", re.IGNORECASE)
 NUMBERED_PROJECT = re.compile(r"^#\s*\d+\s*[:.)-]\s*(.+)$")
@@ -67,6 +84,7 @@ def parse_project_section(lines):
     current = None
     personal_stack = []
     in_personal_section = False
+    in_non_project_section = False
     awaiting_bullet_text = False
 
     def finish():
@@ -82,10 +100,28 @@ def parse_project_section(lines):
         awaiting_bullet_text = False
 
     for line in lines:
+        section_match = NON_PROJECT_SECTION_PATTERN.search(line)
+        if section_match:
+            line = clean(line[: section_match.start()])
+            in_non_project_section = True
+            if not line:
+                continue
+
         top_level = TOP_LEVEL.match(line)
         numbered = NUMBERED_PROJECT.match(line)
         bullet = BULLET.match(line)
         personal_heading = re.match(r"^personal projects\b", line, re.IGNORECASE)
+
+        if in_non_project_section:
+            if personal_heading and not top_level:
+                in_non_project_section = False
+            elif numbered or (
+                top_level
+                and not top_level.group(1).lower().startswith("personal projects")
+            ):
+                in_non_project_section = False
+            else:
+                continue
 
         if personal_heading and not top_level:
             finish()

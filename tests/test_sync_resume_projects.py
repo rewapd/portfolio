@@ -484,6 +484,31 @@ class ResumeProjectParsingTests(unittest.TestCase):
         self.assertEqual(projects[1]["stack"], ["JavaScript", "React.js"])
         self.assertEqual(projects[2]["link"], "https://example.com/movies/")
 
+    def test_ignores_inline_resume_sections_between_project_bullets(self):
+        projects = parse_project_section(
+            [
+                "● Windchill Developer [Tata Consultancy Services Ltd] [Jul 2022-Mar 2026]",
+                "○ Worked on OIR, lifecycle, document, product templates, Acls.",
+                "SKILLS Frontend Javascript, React.js, HTML, CSS Backend Java, SpringBoot DataBase SQL Tools Windchill",
+                "CERTIFICATION Udemy Certified- Java DS & Algo AWARDS Innovation Superstar Award",
+                "● Robotics Process Automation [Infosys Ltd] [Jan 2019-June 2022]",
+                "○ Built and maintained automation workflows.",
+            ]
+        )
+
+        self.assertEqual(
+            [project["name"] for project in projects],
+            ["Windchill Developer", "Robotics Process Automation"],
+        )
+        self.assertEqual(
+            projects[0]["achievements"],
+            ["Worked on OIR, lifecycle, document, product templates, Acls."],
+        )
+        self.assertEqual(
+            projects[1]["achievements"],
+            ["Built and maintained automation workflows."],
+        )
+
     def test_refreshes_resume_content_and_preserves_curated_project_link(self):
         merged = merge_projects(
             [

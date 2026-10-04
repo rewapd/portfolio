@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
-SYNC_PARSER_VERSION = 8
+SYNC_PARSER_VERSION = 9
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
