@@ -1,0 +1,95 @@
+name: Sync portfolio from Google Doc
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  sync-and-deploy:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install resume sync dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Test resume project extraction
+        run: python -m unittest discover -s tests
+
+      - name: Fetch and sync Google Doc
+        env:
+          GOOGLE_DOC_ID: ${{ vars.GOOGLE_DOC_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: python -m scripts.sync_google_doc
+
+      - name: Commit changed portfolio data
+        id: changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/public/profile.json client/public/Rewa-Prasad-Resume.pdf scripts/.google-doc-sync-state.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Google Doc has no portfolio changes."
+            exit 0
+          fi
+          git commit -m "Sync portfolio from Google Doc"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Configure GitHub Pages
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Set up Node.js
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install frontend dependencies
+        if: steps.changes.outputs.changed == 'true'
+        run: npm ci --prefix client
+
+      - name: Build portfolio
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          VITE_PROFILE_VERSION: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: npm --prefix client run build
+
+      - name: Upload static site
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: client/dist
+
+      - name: Deploy to GitHub Pages
+        if: steps.changes.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4

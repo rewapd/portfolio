@@ -23,6 +23,8 @@ The Vite config automatically uses the repository subpath for project sites and 
 
 ## Update portfolio content
 
-Replace `client/public/Rewa-Prasad-Resume.pdf` with the updated resume and push it to `main`. The GitHub Pages workflow extracts the `PROJECTS` section, regenerates the portfolio project cards, and deploys the updated site automatically. Keep project entries under a `PROJECTS` heading in the PDF; numbered entries such as `#1: Project Name — https://...` are recognized as separate projects.
+The portfolio polls the private Google Doc hourly. When the document changes, it updates the downloadable PDF and rebuilds the project cards from its `PROJECTS` section. Existing portfolio links and descriptions are retained for matching project names.
 
-Existing profile details are in `client/public/profile.json`. Run `npm run sync:resume` after replacing the PDF to regenerate project cards locally; Python 3 and the packages in `requirements.txt` must be installed first.
+To enable the private sync, create a Google service account with the Docs API and Drive API enabled, share the document with its service-account email as a Viewer, then add the full service-account JSON key as the `GOOGLE_SERVICE_ACCOUNT_JSON` Actions secret. Add the document ID as the `GOOGLE_DOC_ID` Actions variable. Never commit or share the service-account key. The `Sync portfolio from Google Doc` workflow can also be run manually from GitHub Actions.
+
+Other profile details are in `client/public/profile.json`; automatic extraction currently updates project cards and the downloadable resume PDF.

@@ -3,6 +3,10 @@ name: Deploy portfolio to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - client/public/profile.json
+      - client/public/Rewa-Prasad-Resume.pdf
+      - scripts/.google-doc-sync-state.json
   workflow_dispatch:
 
 permissions:
@@ -49,9 +53,6 @@ jobs:
 
       - name: Install frontend dependencies
         run: npm ci --prefix client
-
-      - name: Generate projects from resume
-        run: python scripts/sync_resume_projects.py
 
       - name: Build portfolio
         env:

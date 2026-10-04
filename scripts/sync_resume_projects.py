@@ -66,6 +66,7 @@ def parse_project_section(lines):
     projects = []
     current = None
     personal_stack = []
+    in_personal_section = False
     awaiting_bullet_text = False
 
     def finish():
@@ -84,11 +85,36 @@ def parse_project_section(lines):
         top_level = TOP_LEVEL.match(line)
         numbered = NUMBERED_PROJECT.match(line)
         bullet = BULLET.match(line)
+        personal_heading = re.match(r"^personal projects\b", line, re.IGNORECASE)
+
+        if personal_heading and not top_level:
+            finish()
+            in_personal_section = True
+            stack_match = re.search(r"\[([^\]]+)\]", line)
+            personal_stack = (
+                [clean(item) for item in re.split(r"[,/]", stack_match.group(1))]
+                if stack_match
+                else []
+            )
+            continue
+
+        if top_level and in_personal_section and current:
+            heading = clean(top_level.group(1))
+            is_work_project = re.search(
+                r"\[[^\]]*(?:Ltd|Limited|Infosys|TCS)\b",
+                heading,
+                re.IGNORECASE,
+            )
+            if not is_work_project:
+                append_description(current, heading)
+                continue
+            in_personal_section = False
 
         if top_level:
             finish()
             heading = clean(top_level.group(1))
             if heading.lower().startswith("personal projects"):
+                in_personal_section = True
                 personal_stack = [
                     clean(item)
                     for item in re.split(r"[,/]", re.search(r"\[([^\]]+)\]", heading).group(1))
