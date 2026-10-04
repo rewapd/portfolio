@@ -191,16 +191,18 @@ def project_key(name):
     return re.sub(r"[^a-z0-9]", "", clean(name).lower())
 
 
-def merge_projects(parsed, existing):
+def merge_projects(parsed, existing, prefer_parsed_description=False):
     existing_by_key = {project_key(item["name"]): item for item in existing}
     merged = []
 
     for project in parsed:
         previous = existing_by_key.get(project_key(project["name"]), {})
         achievements = project["achievements"]
+        parsed_description = achievements[0] if achievements else ""
         description = (
-            previous.get("description")
-            or (achievements[0] if achievements else "")
+            (parsed_description or previous.get("description", ""))
+            if prefer_parsed_description
+            else (previous.get("description") or parsed_description)
         )
         merged.append(
             {

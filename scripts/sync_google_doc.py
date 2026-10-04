@@ -19,12 +19,72 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
+SYNC_PARSER_VERSION = 3
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
 ]
-PROJECTS_START = {"PROJECTS", "PROJECTS & EXPERIENCE", "PROJECT EXPERIENCE"}
 INVISIBLE = re.compile(r"[\u200b-\u200f\ufeff]")
+SECTION_ALIASES = {
+    "projects": {"PROJECTS", "PROJECTS & EXPERIENCE", "PROJECT EXPERIENCE"},
+    "experience": {
+        "EXPERIENCE",
+        "WORK EXPERIENCE",
+        "PROFESSIONAL EXPERIENCE",
+        "WORK HISTORY",
+    },
+    "skills": {
+        "SKILLS",
+        "SKILL",
+        "TECHNICAL SKILLS",
+        "TECHNOLOGY SKILLS",
+        "SKILL SET",
+    },
+    "certifications": {"CERTIFICATION", "CERTIFICATIONS"},
+    "awards": {"AWARD", "AWARDS", "ACHIEVEMENTS"},
+    "languages": {"LANGUAGE", "LANGUAGES"},
+    "education": {"EDUCATION", "ACADEMIC QUALIFICATIONS"},
+    "summary": {
+        "SUMMARY",
+        "PROFILE",
+        "PROFILE SUMMARY",
+        "PROFESSIONAL SUMMARY",
+        "CAREER OBJECTIVE",
+        "OBJECTIVE",
+    },
+}
+SECTION_PREFIXES = sorted(
+    ((alias, section) for section, aliases in SECTION_ALIASES.items() for alias in aliases),
+    key=lambda entry: len(entry[0]),
+    reverse=True,
+)
+SKILL_GROUPS = {
+    "frontend": "frontend",
+    "front end": "frontend",
+    "backend": "backend",
+    "back end": "backend",
+    "database": "database",
+    "databases": "database",
+    "tools": "tools",
+    "tool": "tools",
+    "rpa": "rpa",
+    "automation": "rpa",
+}
+DATE_RANGE = re.compile(
+    r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
+    r"\s+\d{4}\s*[-–]\s*(?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+    r"[a-z]*\s+)?(?:\d{4}|Present)\b",
+    re.IGNORECASE,
+)
+EMAIL = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE)
+PHONE = re.compile(r"(?<!\d)(?:\+?\d{1,3}[-.\s]?)?(?:\(?\d{3,5}\)?[-.\s]?)?\d{6,10}(?!\d)")
+LINKEDIN = re.compile(r"https?://(?:www\.)?linkedin\.com/[^\s)]+", re.IGNORECASE)
+SECTION_HEADING_PATTERN = re.compile(
+    r"(?<!\w)("
+    + "|".join(re.escape(alias) for alias, _ in SECTION_PREFIXES)
+    + r")(?=$|[\s:|])",
+    re.IGNORECASE,
+)
 
 
 def flatten_document_content(content):
@@ -63,19 +123,414 @@ def clean_line(line):
     return re.sub(r"\s+", " ", INVISIBLE.sub("", line)).strip()
 
 
+def section_heading(line):
+    candidate = clean_line(line).strip(" :|").upper()
+    for alias, section in SECTION_PREFIXES:
+        if candidate == alias:
+            return section, ""
+        if candidate.startswith(f"{alias} ") or candidate.startswith(f"{alias}:"):
+            return section, candidate[len(alias) :].strip(" :|")
+    return None, ""
+
+
+def split_sections(lines):
+    sections = {}
+    current = None
+    for line in lines:
+        matches = []
+        for match in SECTION_HEADING_PATTERN.finditer(line):
+            prefix = line[: match.start()]
+            heading_at_start = re.fullmatch(r"[\s●•○◦o:|]*", prefix) is not None
+            heading_is_uppercase = match.group(0).isupper()
+            if not heading_at_start and not heading_is_uppercase:
+                continue
+            if (
+                match.group(1).upper() == "PROJECTS"
+                and prefix.rstrip().lower().endswith("personal")
+            ):
+                continue
+            matches.append(match)
+
+        if not matches:
+            if current and clean_line(line):
+                sections[current].append(clean_line(line))
+            continue
+
+        cursor = 0
+        for match in matches:
+            before = clean_line(line[cursor : match.start()])
+            if before and current:
+                sections[current].append(before)
+            alias = match.group(1).upper()
+            current = next(
+                section
+                for known_alias, section in SECTION_PREFIXES
+                if known_alias == alias
+            )
+            sections.setdefault(current, [])
+            cursor = match.end()
+        remainder = clean_line(line[cursor:])
+        if remainder:
+            sections[current].append(remainder)
+    return sections
+
+
+def content_lines(lines):
+    return [
+        clean_line(re.sub(r"^[●•○◦o]\s*", "", line))
+        for line in lines
+        if clean_line(line)
+    ]
+
+
 def extract_projects(document):
     lines = flatten_document_content(document.get("body", {}).get("content", []))
-    start = next(
-        (index for index, line in enumerate(lines) if line.upper() in PROJECTS_START),
-        None,
-    )
-    if start is None:
+    sections = split_sections(lines)
+    project_lines = sections.get("projects", [])
+    if not project_lines:
         raise ValueError("Could not find a PROJECTS heading in the Google Doc.")
 
-    projects = parse_project_section(lines[start + 1 :])
+    projects = parse_project_section(project_lines)
     if not projects:
         raise ValueError("No projects were found below the Google Doc PROJECTS heading.")
     return projects
+
+
+def split_values(lines):
+    values = []
+    for line in content_lines(lines):
+        values.extend(
+            clean_line(value).strip(" ,;")
+            for value in re.split(r"\s*[;|]\s*", line)
+            if clean_line(value).strip(" ,;")
+        )
+    return values
+
+
+def extract_skills(lines):
+    groups = {}
+    for line in lines:
+        matches = list(
+            re.finditer(
+                r"(?i)(?<!\w)(Front\s*end|Back\s*end|Database|Databases|Tools?|RPA|Automation)\s*:?",
+                line,
+            )
+        )
+        if not matches:
+            continue
+        for index, match in enumerate(matches):
+            label = re.sub(r"\s+", " ", match.group(1).lower())
+            group = SKILL_GROUPS.get(label)
+            if not group:
+                continue
+            end = matches[index + 1].start() if index + 1 < len(matches) else len(line)
+            values = re.split(r"\s*[,;/]\s*", line[match.end() : end])
+            groups.setdefault(group, []).extend(
+                clean_line(value).strip(" .")
+                for value in values
+                if clean_line(value).strip(" .")
+            )
+
+    if not groups:
+        values = split_values(lines)
+        if values:
+            groups["general"] = values
+    return {
+        group: list(dict.fromkeys(items))
+        for group, items in groups.items()
+        if items
+    }
+
+
+def extract_education(lines):
+    education = []
+    current = None
+    degree_pattern = re.compile(
+        r"\b(?:B\.?Tech|B\.?E\.?|M\.?Tech|M\.?S\.?|B\.?Sc|M\.?Sc|"
+        r"Ph\.?D|Higher Secondary|Senior Secondary|Bachelor|Master|Diploma)\b",
+        re.IGNORECASE,
+    )
+
+    def finish():
+        if current and current.get("school"):
+            education.append(
+                {key: value for key, value in current.items() if value}
+            )
+
+    for line in content_lines(lines):
+        parts = [clean_line(part) for part in re.split(r"\s*[|;]\s*", line) if part.strip()]
+        for part in parts:
+            date_match = DATE_RANGE.search(part)
+            gpa_match = re.search(r"\bGPA\s*:?\s*[\d.]+(?:\s*/\s*[\d.]+)?", part, re.I)
+            degree_match = degree_pattern.search(part)
+            is_school = re.search(
+                r"\b(?:university|institute|college|school|academy)\b", part, re.I
+            )
+            if is_school and (current is None or current.get("school")):
+                finish()
+                current = {"school": part}
+                continue
+            if current is None:
+                current = {}
+            if date_match:
+                current["period"] = date_match.group(0)
+            if gpa_match:
+                current["gpa"] = gpa_match.group(0)
+            if degree_match:
+                current["degree"] = degree_match.group(0)
+                field = part[degree_match.end() :].strip(" ,:-")
+                if field and not date_match and not gpa_match:
+                    current["field"] = field
+            elif is_school:
+                current["school"] = part
+            elif current.get("school") and not date_match and not gpa_match:
+                current.setdefault("field", part)
+    finish()
+    return education
+
+
+def extract_experiences(lines, projects):
+    experiences = []
+    current = None
+    company_pattern = re.compile(
+        r"\b(?:Tata Consultancy Services|Infosys(?:\s+Ltd\.?)?|"
+        r"[A-Z][A-Za-z& ]+\s+(?:Ltd|Limited|Inc|Corporation))\b",
+        re.IGNORECASE,
+    )
+
+    def finish():
+        if current and current.get("company"):
+            current["highlights"] = list(dict.fromkeys(current["highlights"]))
+            experiences.append(current.copy())
+
+    for line in lines:
+        value = clean_line(re.sub(r"^[●•○◦o]\s*", "", line))
+        if not value:
+            continue
+        company_match = company_pattern.search(value)
+        if company_match and (
+            current is None
+            or current.get("company")
+            or DATE_RANGE.search(value)
+        ):
+            finish()
+            current = {
+                "company": company_match.group(0),
+                "location": "",
+                "role": "",
+                "duration": "",
+                "type": "",
+                "highlights": [],
+            }
+            remainder = value[company_match.end() :].strip(" -|,")
+            date_match = DATE_RANGE.search(remainder)
+            if date_match:
+                current["duration"] = date_match.group(0)
+            role = (
+                re.sub(r"\b" + re.escape(date_match.group(0)) + r"\b", "", remainder)
+                .strip(" -–—|,")
+                if date_match
+                else remainder.strip(" -–—|,")
+            )
+            if role:
+                current["role"] = role
+            continue
+        if current is None:
+            continue
+        date_match = DATE_RANGE.search(value)
+        if date_match and not current["duration"]:
+            current["duration"] = date_match.group(0)
+            role = clean_line(value.replace(date_match.group(0), "").strip(" -|,"))
+            if role and not current["role"]:
+                current["role"] = role
+        elif re.match(r"^(?:Location|Based in)\s*:", value, re.I):
+            current["location"] = value.split(":", 1)[1].strip()
+        elif value:
+            current["highlights"].append(value)
+    finish()
+
+    if experiences:
+        return experiences
+
+    # Some resumes describe employment only as company-tagged project entries.
+    for project in projects:
+        company = project.get("company")
+        if not company:
+            continue
+        matched = next(
+            (item for item in experiences if item["company"].lower() == company.lower()),
+            None,
+        )
+        if not matched:
+            matched = {
+                "company": company,
+                "location": "",
+                "role": project["name"],
+                "duration": project.get("period", ""),
+                "type": "",
+                "highlights": [],
+            }
+            experiences.append(matched)
+        matched["highlights"].extend(project.get("achievements", []))
+    return experiences
+
+
+def extract_profile(document, existing, projects):
+    lines = flatten_document_content(document.get("body", {}).get("content", []))
+    sections = split_sections(lines)
+    result = dict(existing)
+
+    header = []
+    for line in lines:
+        if section_heading(line)[0]:
+            break
+        if clean_line(line):
+            header.append(clean_line(line))
+
+    labeled = {}
+    for line in lines:
+        for label, value in re.findall(
+            r"(?i)\b(Name|Role|Title|Headline|Summary|Location|Address|Phone|Mobile|Email|LinkedIn)\s*:\s*(.*?)(?=\s+(?:Name|Role|Title|Headline|Summary|Location|Address|Phone|Mobile|Email|LinkedIn)\s*:|$)",
+            line,
+        ):
+            labeled[label.lower()] = clean_line(value)
+
+    if labeled.get("name"):
+        result["name"] = labeled["name"]
+    elif header:
+        candidate = header[0]
+        if not re.search(r"[@\d]|https?://", candidate) and len(candidate.split()) <= 5:
+            result["name"] = candidate
+    if labeled.get("role") or labeled.get("title"):
+        result["role"] = labeled.get("role") or labeled["title"]
+    elif len(header) > 1 and re.search(
+        r"\b(?:developer|engineer|consultant|analyst|manager)\b", header[1], re.I
+    ):
+        result["role"] = header[1]
+    if labeled.get("headline"):
+        result["headline"] = labeled["headline"]
+    if labeled.get("summary"):
+        result["summary"] = labeled["summary"]
+        if not labeled.get("headline"):
+            result["headline"] = result["summary"].split(". ", 1)[0].strip()
+    elif sections.get("summary"):
+        result["summary"] = " ".join(content_lines(sections["summary"]))
+        if not labeled.get("headline"):
+            result["headline"] = result["summary"].split(". ", 1)[0].strip()
+    else:
+        unlabeled_header = [
+            line
+            for line in header
+            if not re.match(
+                r"(?i)^(?:name|role|title|headline|summary|location|address|"
+                r"phone|mobile|email|linkedin)\s*:",
+                line,
+            )
+            and not EMAIL.search(line)
+            and not PHONE.fullmatch(line)
+            and not LINKEDIN.search(line)
+            and not re.search(
+                r"\b(?:developer|engineer|consultant|analyst|manager)\b",
+                line,
+                re.I,
+            )
+        ]
+        descriptive_header = [
+            line for line in unlabeled_header if len(line.split()) >= 8
+        ]
+        if descriptive_header and not labeled.get("headline"):
+            result["headline"] = descriptive_header[0]
+        if descriptive_header:
+            result["summary"] = " ".join(descriptive_header)
+
+    contact = dict(existing.get("contact", {}))
+    all_text = "\n".join(lines)
+    email_match = EMAIL.search(all_text)
+    phone_match = PHONE.search(
+        labeled.get("phone", "") or labeled.get("mobile", "") or all_text
+    )
+    linkedin_match = LINKEDIN.search(all_text)
+    if email_match:
+        contact["email"] = email_match.group(0)
+    if phone_match:
+        contact["phone"] = phone_match.group(0).strip()
+    if linkedin_match:
+        contact["linkedin"] = linkedin_match.group(0).rstrip(".,")
+    if labeled.get("location") or labeled.get("address"):
+        contact["location"] = labeled.get("location") or labeled["address"]
+    else:
+        address = next(
+            (
+                line
+                for line in header
+                if re.search(r"\b\d{6}\b", line)
+                and re.search(r"\b(?:Pune|Mumbai|Delhi|Bengaluru|Hyderabad)\b", line, re.I)
+            ),
+            None,
+        )
+        if address:
+            contact["location"] = address
+    result["contact"] = contact
+
+    if sections.get("skills"):
+        skills = extract_skills(sections["skills"])
+        if skills:
+            result["skills"] = skills
+    if sections.get("certifications"):
+        certifications = split_values(sections["certifications"])
+        if certifications:
+            result["certifications"] = certifications
+    if sections.get("awards"):
+        awards = split_values(sections["awards"])
+        if awards:
+            result["awards"] = awards
+    if sections.get("languages"):
+        languages = split_values(sections["languages"])
+        if len(languages) == 1:
+            languages = [clean_line(value) for value in languages[0].split(",") if value.strip()]
+        if languages:
+            result["languages"] = languages
+    if sections.get("education"):
+        education = extract_education(sections["education"])
+        if education:
+            result["education"] = education
+    if sections.get("experience"):
+        experiences = extract_experiences(sections["experience"], projects)
+        if experiences:
+            result["experiences"] = experiences
+    elif projects:
+        result["experiences"] = extract_experiences([], projects)
+
+    result["projects"] = merge_projects(
+        projects,
+        existing.get("projects", []),
+        prefer_parsed_description=True,
+    )
+    result["metrics"] = update_metrics(result, existing.get("metrics", []))
+    return result
+
+
+def update_metrics(profile, existing_metrics):
+    values = {item["label"]: item["value"] for item in existing_metrics}
+    certifications = profile.get("certifications", [])
+    if certifications:
+        values["Certifications"] = str(len(certifications))
+    stack = []
+    for skills in profile.get("skills", {}).values():
+        for skill in skills:
+            if skill not in stack:
+                stack.append(skill)
+    if stack:
+        values["Core Stack"] = ", ".join(stack[:3])
+    years = re.search(r"\b(\d+\+?\s+years?)\b", profile.get("summary", ""), re.I)
+    if years:
+        values["Experience"] = years.group(1)
+    if profile.get("role"):
+        values["Focus"] = profile["role"]
+    return [
+        {"label": label, "value": value}
+        for label, value in values.items()
+    ]
 
 
 def make_session(service_account_json):
@@ -171,6 +626,7 @@ def main():
         previous_state = json.loads(SYNC_STATE_PATH.read_text(encoding="utf-8"))
         if (
             previous_state.get("revisionId") == revision_id
+            and previous_state.get("parserVersion") == SYNC_PARSER_VERSION
             and PROFILE_PATH.is_file()
             and RESUME_PATH.is_file()
         ):
@@ -181,16 +637,24 @@ def main():
     pdf_data = fetch_google_doc_pdf(session, document_id)
 
     profile = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
-    profile["projects"] = merge_projects(projects, profile.get("projects", []))
-    profile_data = (json.dumps(profile, ensure_ascii=False, indent=2) + "\n").encode(
-        "utf-8"
-    )
+    profile = extract_profile(document, profile, projects)
+    profile_data = (
+        json.dumps(profile, ensure_ascii=False, indent=2) + "\n"
+    ).encode("utf-8")
 
     write_atomically(RESUME_PATH, pdf_data)
     write_atomically(PROFILE_PATH, profile_data)
-    state_data = (json.dumps({"revisionId": revision_id}) + "\n").encode("utf-8")
+    state_data = (
+        json.dumps(
+            {"revisionId": revision_id, "parserVersion": SYNC_PARSER_VERSION}
+        )
+        + "\n"
+    ).encode("utf-8")
     write_atomically(SYNC_STATE_PATH, state_data)
-    print(f"Synced {len(projects)} projects and the latest PDF from Google Docs.")
+    print(
+        f"Synced profile sections and {len(projects)} projects, "
+        "plus the latest PDF from Google Docs."
+    )
 
 
 if __name__ == "__main__":

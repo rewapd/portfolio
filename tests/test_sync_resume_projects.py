@@ -7,10 +7,118 @@ from unittest.mock import patch
 
 from scripts import sync_google_doc
 from scripts.sync_resume_projects import merge_projects, parse_project_section
-from scripts.sync_google_doc import extract_projects
+from scripts.sync_google_doc import extract_profile, extract_projects
 
 
 class ResumeProjectParsingTests(unittest.TestCase):
+    def test_extracts_all_supported_portfolio_sections_from_google_docs(self):
+        content = [
+            ("Name: Rewa Updated", False),
+            ("Role: Platform Engineer", False),
+            ("Email: rewa.updated@example.com", False),
+            ("Phone: +91 9876543210", False),
+            ("Location: Pune, India", False),
+            ("LinkedIn: https://www.linkedin.com/in/rewa-updated/", False),
+            ("SUMMARY", False),
+            ("Platform Engineer with 8 years of experience.", False),
+            ("EXPERIENCE", False),
+            ("Acme Ltd — Senior Engineer Jan 2020 - Present", True),
+            ("Led delivery of scalable services.", True),
+            ("PROJECTS", False),
+            ("Project Alpha [Acme Ltd] [Jan 2024-Present]", True),
+            ("Delivered a new customer platform.", False),
+            ("SKILLS", False),
+            ("Frontend: TypeScript, React", False),
+            ("Backend: Node.js", False),
+            ("Database: PostgreSQL", False),
+            ("Tools: GitHub, Docker", False),
+            ("CERTIFICATIONS", False),
+            ("Cloud Architecture", True),
+            ("AWARDS", False),
+            ("Engineering Excellence", True),
+            ("LANGUAGES", False),
+            ("English, Hindi", False),
+            ("EDUCATION", False),
+            ("Example University, Pune", False),
+            ("B.Tech Instrumentation", False),
+            ("July 2011 - June 2015", False),
+            ("GPA: 8.4/10", False),
+        ]
+        document = {
+            "body": {
+                "content": [
+                    {
+                        "paragraph": {
+                            **({"bullet": {"nestingLevel": 0}} if bullet else {}),
+                            "elements": [{"textRun": {"content": text + "\n"}}],
+                        }
+                    }
+                    for text, bullet in content
+                ]
+            }
+        }
+        existing = {
+            "name": "Old Name",
+            "role": "Old Role",
+            "headline": "Old headline",
+            "summary": "Old summary",
+            "contact": {
+                "location": "Old location",
+                "phone": "0000000000",
+                "email": "old@example.com",
+                "linkedin": "https://linkedin.com/old",
+            },
+            "metrics": [
+                {"label": "Experience", "value": "4 years"},
+                {"label": "Core Stack", "value": "Old stack"},
+                {"label": "Certifications", "value": "1"},
+                {"label": "Focus", "value": "Old focus"},
+            ],
+            "experiences": [],
+            "projects": [],
+            "skills": {},
+            "certifications": [],
+            "awards": [],
+            "education": [],
+            "languages": [],
+        }
+
+        projects = extract_projects(document)
+        profile = extract_profile(document, existing, projects)
+
+        self.assertEqual(profile["name"], "Rewa Updated")
+        self.assertEqual(profile["role"], "Platform Engineer")
+        self.assertEqual(profile["summary"], "Platform Engineer with 8 years of experience.")
+        self.assertEqual(
+            profile["headline"], "Platform Engineer with 8 years of experience."
+        )
+        self.assertEqual(profile["contact"]["email"], "rewa.updated@example.com")
+        self.assertEqual(profile["contact"]["phone"], "+91 9876543210")
+        self.assertEqual(profile["contact"]["location"], "Pune, India")
+        self.assertEqual(
+            profile["contact"]["linkedin"],
+            "https://www.linkedin.com/in/rewa-updated/",
+        )
+        self.assertEqual(profile["skills"]["database"], ["PostgreSQL"])
+        self.assertEqual(profile["certifications"], ["Cloud Architecture"])
+        self.assertEqual(profile["awards"], ["Engineering Excellence"])
+        self.assertEqual(profile["languages"], ["English", "Hindi"])
+        self.assertEqual(profile["education"][0]["school"], "Example University, Pune")
+        self.assertEqual(profile["education"][0]["degree"], "B.Tech")
+        self.assertEqual(profile["experiences"][0]["company"], "Acme Ltd")
+        self.assertEqual(profile["experiences"][0]["role"], "Senior Engineer")
+        self.assertEqual(profile["projects"][0]["name"], "Project Alpha")
+        self.assertEqual(
+            profile["projects"][0]["description"],
+            "Delivered a new customer platform.",
+        )
+        self.assertEqual(
+            {item["label"]: item["value"] for item in profile["metrics"]}[
+                "Certifications"
+            ],
+            "1",
+        )
+
     def test_extracts_projects_from_google_docs_document_structure(self):
         document = {
             "body": {
@@ -169,7 +277,13 @@ class ResumeProjectParsingTests(unittest.TestCase):
             profile_path.write_text('{"projects": []}\n', encoding="utf-8")
             resume_path.write_bytes(b"%PDF-existing")
             state_path.write_text(
-                json.dumps({"revisionId": "revision-1"}), encoding="utf-8"
+                json.dumps(
+                    {
+                        "revisionId": "revision-1",
+                        "parserVersion": sync_google_doc.SYNC_PARSER_VERSION,
+                    }
+                ),
+                encoding="utf-8",
             )
 
             with patch.dict(
