@@ -2,7 +2,7 @@
   "name": "Rewa Prasad",
   "role": "Software Developer",
   "headline": "Product-minded software developer specializing in Windchill customization, enterprise workflow automation, and modern web interfaces.",
-  "summary": "Software Developer with 9+ years of experience designing, developing, and deploying enterprise solutions across manufacturing, banking, and automation domains. Skilled in Windchill customization, Java, Spring Boot, React, and RPA implementations with a strong focus on user experience, process optimization, and scalable delivery.",
+  "summary": "Software Developer with 10+ years of experience designing, developing, and deploying enterprise solutions across manufacturing, banking, and automation domains. Skilled in Windchill customization, Java, Spring Boot, React, and RPA implementations with a strong focus on user experience, process optimization, and scalable delivery.",
   "contact": {
     "location": "Pune - 411057",
     "phone": "653397",
@@ -12,11 +12,11 @@
   "metrics": [
     {
       "label": "Experience",
-      "value": "9+ years"
+      "value": "10+ years"
     },
     {
       "label": "Core Stack",
-      "value": "Javascript, React.js, HTML"
+      "value": "Javascript, React.js, HTML, Windchill"
     },
     {
       "label": "Certifications",

@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
-SYNC_PARSER_VERSION = 7
+SYNC_PARSER_VERSION = 8
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
@@ -764,7 +764,14 @@ def update_metrics(profile, existing_metrics):
             if skill not in stack:
                 stack.append(skill)
     if stack:
-        values["Core Stack"] = ", ".join(stack[:3])
+        core_stack = stack[:3]
+        windchill = next(
+            (skill for skill in stack if skill.lower() == "windchill"),
+            None,
+        )
+        if windchill and windchill not in core_stack:
+            core_stack.append(windchill)
+        values["Core Stack"] = ", ".join(core_stack)
     years = re.search(r"\b(\d+\+?\s+years?)\b", profile.get("summary", ""), re.I)
     if years:
         values["Experience"] = years.group(1)

@@ -17,6 +17,7 @@ from scripts.sync_google_doc import (
     extract_profile,
     extract_projects,
     extract_projects_from_pdf,
+    update_metrics,
 )
 
 
@@ -163,6 +164,28 @@ class ResumeProjectParsingTests(unittest.TestCase):
                     "description": "Secured 1st position",
                 },
             ],
+        )
+
+    def test_metrics_include_experience_and_windchill_in_core_stack(self):
+        metrics = update_metrics(
+            {
+                "summary": "Software Developer with 10+ years of experience.",
+                "role": "Software Developer",
+                "skills": {
+                    "frontend": ["JavaScript", "React.js", "HTML"],
+                    "tools": ["Windchill"],
+                },
+            },
+            [
+                {"label": "Experience", "value": "9+ years"},
+                {"label": "Core Stack", "value": "old stack"},
+            ],
+        )
+        values = {item["label"]: item["value"] for item in metrics}
+
+        self.assertEqual(values["Experience"], "10+ years")
+        self.assertEqual(
+            values["Core Stack"], "JavaScript, React.js, HTML, Windchill"
         )
 
     def test_keeps_table_columns_separate_when_extracting_projects_and_skills(self):

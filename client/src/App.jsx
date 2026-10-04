@@ -134,8 +134,15 @@ function App() {
   });
   const professionalProjects = filteredProjects.filter((project) => project.company);
   const personalProjects = filteredProjects.filter((project) => !project.company);
-  const renderProjectCard = (project, index, className) => (
-    <motion.article
+  const renderProjectCard = (project, index, className) => {
+    const additionalAchievements = project.achievements.filter((achievement, achievementIndex) => !(
+      achievementIndex === 0
+      && project.description
+      && achievement.trim() === project.description.trim()
+    ));
+
+    return (
+      <motion.article
       key={project.name}
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -143,18 +150,24 @@ function App() {
       transition={{ delay: index * 0.08 }}
       className={className}
     >
-      <div className="mb-4 flex items-start justify-between gap-3">
+      <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-start sm:gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-violet-200/80">{project.company || 'Personal Build'}</p>
           <h3 className="mt-2 text-xl font-bold text-white">{project.name}</h3>
         </div>
-        {project.link && (
-          <a href={project.link} target="_blank" rel="noreferrer" className="rounded-full border border-white/10 bg-white/5 p-2 text-slate-200 transition hover:border-violet-400/40 hover:text-white">
-            <ExternalLink className="h-4 w-4" />
-          </a>
-        )}
+        <div className="flex flex-shrink-0 flex-wrap items-start justify-end gap-2 sm:self-start">
+          {project.period && (
+            <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-100">
+              {project.period}
+            </span>
+          )}
+          {project.link && (
+            <a href={project.link} target="_blank" rel="noreferrer" aria-label={`Open ${project.name}`} className="rounded-full border border-white/10 bg-white/5 p-2 text-slate-200 transition hover:border-violet-400/40 hover:text-white">
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          )}
+        </div>
       </div>
-      {project.period && <p className="mb-4 text-sm text-cyan-200">{project.period}</p>}
       {project.description && <p className="mb-5 leading-7 text-slate-300">{project.description}</p>}
 
       {project.stack.length > 0 && (
@@ -167,9 +180,9 @@ function App() {
         </div>
       )}
 
-      {project.achievements.length > 0 && (
+      {additionalAchievements.length > 0 && (
         <ul className="space-y-3 text-sm leading-7 text-slate-300">
-          {project.achievements.map((achievement) => (
+          {additionalAchievements.map((achievement) => (
             <li key={achievement} className="flex gap-3">
               <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
               <span>{achievement}</span>
@@ -177,8 +190,9 @@ function App() {
           ))}
         </ul>
       )}
-    </motion.article>
-  );
+      </motion.article>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white selection:bg-violet-500/40">
