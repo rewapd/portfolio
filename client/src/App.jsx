@@ -353,7 +353,7 @@ function App() {
             </div>
           </div>
 
-          <div className="grid items-start gap-6 xl:grid-cols-2">
+          <div className="columns-1 gap-6 xl:columns-2">
             {filteredProjects.map((project, index) => (
               <motion.article
                 key={project.name}
@@ -361,9 +361,7 @@ function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.12 }}
                 transition={{ delay: index * 0.08 }}
-                className={`group flex flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30 ${
-                  project.company ? 'xl:col-span-2' : ''
-                }`}
+                className="group mb-6 inline-flex w-full break-inside-avoid flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30"
               >
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div>
