@@ -204,7 +204,8 @@
       "SpringBoot"
     ],
     "database": [
-      "SQL"
+      "SQL",
+      "Oracle"
     ],
     "tools": [
       "Windchill",
