@@ -257,7 +257,7 @@ function App() {
                     <img
                       src={`${baseUrl}rewa-prasad.jpg`}
                       alt="Rewa Prasad"
-                      className="h-[340px] w-[270px] rounded-[calc(2rem-2px)] object-cover object-top"
+                      className="h-[400px] w-[300px] max-w-full rounded-[calc(2rem-2px)] object-cover object-top"
                     />
                     <div className="absolute inset-x-0 bottom-0 rounded-b-[calc(2rem-2px)] bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-transparent px-5 pb-5 pt-14">
                       <p className="text-lg font-semibold text-white">{profile.name}</p>
