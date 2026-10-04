@@ -2,7 +2,7 @@ name: Sync portfolio from Google Doc
 
 on:
   schedule:
-    - cron: "23 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
