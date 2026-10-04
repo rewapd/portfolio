@@ -353,7 +353,7 @@ function App() {
             </div>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="grid items-start gap-6 xl:grid-cols-2">
             {filteredProjects.map((project, index) => (
               <motion.article
                 key={project.name}
@@ -361,7 +361,7 @@ function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.12 }}
                 transition={{ delay: index * 0.08 }}
-                className="group flex h-full flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30"
+                className="group flex flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30"
               >
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div>
@@ -374,7 +374,7 @@ function App() {
                     </a>
                   )}
                 </div>
-                <p className="mb-4 text-sm text-cyan-200">{project.period}</p>
+                {project.period && <p className="mb-4 text-sm text-cyan-200">{project.period}</p>}
                 <p className="mb-5 leading-7 text-slate-300">{project.description}</p>
 
                 <div className="mb-5 flex flex-wrap gap-2">
@@ -385,7 +385,7 @@ function App() {
                   ))}
                 </div>
 
-                <ul className="mt-auto space-y-3 text-sm leading-7 text-slate-300">
+                <ul className="space-y-3 text-sm leading-7 text-slate-300">
                   {project.achievements.map((achievement) => (
                     <li key={achievement} className="flex gap-3">
                       <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
