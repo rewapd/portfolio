@@ -405,7 +405,7 @@ function App() {
               <h2 className="text-2xl font-semibold text-white">Skill Stack</h2>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid items-start gap-5 md:grid-cols-2">
               {Object.entries(profile.skills).map(([group, items]) => (
                 <div key={group} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p className="mb-3 text-xs uppercase tracking-[0.2em] text-slate-400">{group}</p>
