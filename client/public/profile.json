@@ -16,7 +16,7 @@
     },
     {
       "label": "Core Stack",
-      "value": ")"
+      "value": "Javascript, React.js, HTML"
     },
     {
       "label": "Certifications",
@@ -30,33 +30,27 @@
   "experiences": [
     {
       "company": "Accenture Solutions Pvt Ltd",
-      "location": "",
-      "role": "Pune — Technical Lead",
+      "location": "Pune",
+      "role": "Technical Lead",
       "duration": "Apr 2026 - PRESENT",
-      "type": "",
-      "highlights": [
-        "Software Developer"
-      ]
+      "type": "Software Developer",
+      "highlights": []
     },
     {
       "company": "Tata Consultancy Services",
-      "location": "",
-      "role": "Pune — Assistant Consultant",
+      "location": "Pune",
+      "role": "Assistant Consultant",
       "duration": "July 2022 - Mar 2026",
-      "type": "",
-      "highlights": [
-        "Software Developer"
-      ]
+      "type": "Software Developer",
+      "highlights": []
     },
     {
       "company": "Infosys Ltd",
-      "location": "",
-      "role": "Mysore, Amsterdam — Senior Associate Consultant",
+      "location": "Mysore, Amsterdam",
+      "role": "Senior Associate Consultant",
       "duration": "Feb 2016 - June 2022",
-      "type": "",
-      "highlights": [
-        "RPA Developer"
-      ]
+      "type": "RPA Developer",
+      "highlights": []
     }
   ],
   "projects": [
@@ -110,8 +104,33 @@
     }
   ],
   "skills": {
-    "rpa": [
-      ")"
+    "frontend": [
+      "Javascript",
+      "React.js",
+      "HTML",
+      "CSS"
+    ],
+    "backend": [
+      "Java",
+      "SpringBoot"
+    ],
+    "database": [
+      "SQL"
+    ],
+    "tools": [
+      "Windchill",
+      "Eclipse",
+      "IntelliJ Idea",
+      "VsCode",
+      "STS",
+      "Jenkins",
+      "ServiceNow",
+      "Splunk",
+      "Jira",
+      "Azure Boards",
+      "GitHub",
+      "Kofax TotalAgility",
+      "Kofax Kapow (Kofax RPA)"
     ]
   },
   "certifications": [
@@ -147,37 +166,7 @@
     }
   ],
   "languages": [
-    "Hindi, English",
-    "Personal Projects [JavaScript, React.js]",
-    "#1 : usePopCorn – https://rewapd.github.io/usePopCorn/ (Please use Desktop view for best experience)",
-    "Implemented movie search application.",
-    "Features : search movie, add to watched list, rate the movie, remove watched movie.",
-    "Concepts: localStorage api,useState, useEffect, custom hooks, fetch API",
-    "#2 : Forkify – https://forkify-rewa.netlify.app/ (Please use Desktop view for best experience)",
-    "Implemented recipe search application.",
-    "Features : search recipe, show ingredients, add or subtract servings and ingredients will be adjusted accordingly, bookmarks recipe, handling pagination for recipe list.",
-    "Concepts: MVC architecture JS, localStorage API, eventListners, DOM manipulation, Promises, async/await, fetch API",
-    "#3 : FastPizza – https://pizzafast-co.netlify.app/ (Please use Desktop view for best experience)",
-    "Implemented pizza ordering application.",
-    "Features : add/remove pizza to cart, increment/decrement quantity, open cart, clear cart, form details for order, address details",
-    "Concepts: react-router-dom, redux.js, fetch API, geolocation API, useDispatch, useSelector, tailwind css",
-    "Robotics Process Automation[Infosys Ltd] — Banking [Jan 2019-June 2022]",
-    "Provided an end to end solution for business processes using Kofax RPA. Leading efforts for developing, testing and deployment of robots.",
-    "Coordinated and worked with Business analysts at client location (Amsterdam).",
-    "Developed and optimized robots with interaction of APIs to connect applications such as Outlook mailbox (Microsoft Graph API).",
-    "Performing load tests to ensure optimal utilization of available resources with respect to tool and server to ensure good performance of software robots without causing any interruption and damage.",
-    "Managing, analyzing and providing solutions for incidents and problems with respect to software robots to ensure minimal impact on business processes. Carrying out regular root cause analysis to identify and mitigate commonly occurring issues.",
-    "Creating Splunk dashboards to monitor the performance of robots as well as finding issues.",
-    "Worked in an Agile environment and actively volunteered as Scrum master to facilitate smooth working of Scrum team. • Strong understanding of DevOps practice within RPA capabilities.",
-    "Java Developer [Infosys Ltd] — Banking [Feb 2016-Dec 2019]",
-    "Development of Java modules to archive communication [like mails, chat and fax] and customer documents in hot frequently accessible data: Nuxeo] and cold archival [Horton works] and their retention process.",
-    "Environment: Coding done in STS in combination of CICD with Jenkins, SONAR and HP-fortify.",
-    "Team working and Hierarchy: Worked as a Developer to Extract, and transform the documents to enable loading in the New System, in the Scrum team of 7 members.",
-    "Extraction of metadata mails, chat and Fax and Storing the same in Hadoop and Nuxeo.",
-    "Coding with Nuxeo API to store metadata",
-    "Transforming the documents to enable storage in the backend system",
-    "Loading Scripts for the execution of Loader in the new System",
-    "Responsible for Code base lining and build using Nexus repository and Jenkins.",
-    "Responsible for code build and deployment of releases."
+    "Hindi",
+    "English"
   ]
 }
