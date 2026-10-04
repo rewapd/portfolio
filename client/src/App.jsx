@@ -140,7 +140,7 @@ function App() {
       <main className="relative mx-auto max-w-7xl px-4 pb-20 pt-5 sm:px-6 lg:px-8">
         <header className="sticky top-3 z-40 mb-8 flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/75 px-4 py-3 shadow-glow backdrop-blur-2xl sm:rounded-full">
           <a href="#top" aria-label="Back to top" className="flex items-center gap-3">
-            <img src={`${baseUrl}rewa-prasad.jpg`} alt="" className="h-10 w-10 rounded-full border border-white/20 object-cover object-top" />
+            <img src={`${baseUrl}rewa-prasad-office.jpg`} alt="" className="h-10 w-10 rounded-full border border-white/20 object-cover object-top" />
             <div>
               <p className="text-[10px] uppercase tracking-[0.28em] text-violet-200/80">Portfolio / 2026</p>
               <p className="text-sm font-medium text-slate-200">{profile.name}</p>
@@ -255,7 +255,7 @@ function App() {
                 <div className="relative z-10 flex h-full items-center justify-center px-6 pt-8">
                   <div className="relative rounded-[2rem] bg-gradient-to-br from-violet-400 via-cyan-300 to-violet-600 p-[2px] shadow-[0_20px_70px_rgba(76,29,149,0.65)]">
                     <img
-                      src={`${baseUrl}rewa-prasad.jpg`}
+                      src={`${baseUrl}rewa-prasad-office.jpg`}
                       alt="Rewa Prasad"
                       className="h-[400px] w-[300px] max-w-full rounded-[calc(2rem-2px)] object-cover object-top"
                     />
