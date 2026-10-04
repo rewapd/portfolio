@@ -135,11 +135,11 @@ function App() {
   const professionalProjects = filteredProjects.filter((project) => project.company);
   const personalProjects = filteredProjects.filter((project) => !project.company);
   const renderProjectCard = (project, index, className) => {
-    const additionalAchievements = project.achievements.filter((achievement, achievementIndex) => !(
-      achievementIndex === 0
-      && project.description
-      && achievement.trim() === project.description.trim()
-    ));
+    const projectDetails = [...new Set(
+      [project.description, ...project.achievements]
+        .map((detail) => detail?.trim())
+        .filter(Boolean)
+    )];
 
     return (
       <motion.article
@@ -168,27 +168,25 @@ function App() {
           )}
         </div>
       </div>
-      {project.description && <p className="mb-5 leading-7 text-slate-300">{project.description}</p>}
+      {projectDetails.length > 0 && (
+        <ul className="space-y-3 text-sm leading-7 text-slate-300">
+          {projectDetails.map((detail) => (
+            <li key={detail} className="flex gap-3">
+              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
+              <span>{detail}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {project.stack.length > 0 && (
-        <div className="mb-5 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-2">
           {project.stack.map((tag) => (
             <span key={tag} className="rounded-full border border-violet-400/30 bg-violet-500/10 px-2.5 py-1 text-xs text-violet-100">
               {tag}
             </span>
           ))}
         </div>
-      )}
-
-      {additionalAchievements.length > 0 && (
-        <ul className="space-y-3 text-sm leading-7 text-slate-300">
-          {additionalAchievements.map((achievement) => (
-            <li key={achievement} className="flex gap-3">
-              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
-              <span>{achievement}</span>
-            </li>
-          ))}
-        </ul>
       )}
       </motion.article>
     );

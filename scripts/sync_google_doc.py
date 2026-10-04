@@ -764,13 +764,18 @@ def update_metrics(profile, existing_metrics):
             if skill not in stack:
                 stack.append(skill)
     if stack:
-        core_stack = stack[:3]
-        windchill = next(
-            (skill for skill in stack if skill.lower() == "windchill"),
-            None,
+        preferred_stack = ["Windchill", "Java", "Javascript", "React.js"]
+        core_stack = [
+            preferred
+            for preferred in preferred_stack
+            if any(skill.lower() == preferred.lower() for skill in stack)
+        ]
+        core_stack.extend(
+            skill
+            for skill in stack
+            if skill.lower() not in {item.lower() for item in core_stack}
         )
-        if windchill and windchill not in core_stack:
-            core_stack.append(windchill)
+        core_stack = core_stack[:4]
         values["Core Stack"] = ", ".join(core_stack)
     years = re.search(r"\b(\d+\+?\s+years?)\b", profile.get("summary", ""), re.I)
     if years:

@@ -172,7 +172,8 @@ class ResumeProjectParsingTests(unittest.TestCase):
                 "summary": "Software Developer with 10+ years of experience.",
                 "role": "Software Developer",
                 "skills": {
-                    "frontend": ["JavaScript", "React.js", "HTML"],
+                    "frontend": ["Javascript", "React.js", "HTML"],
+                    "backend": ["Java"],
                     "tools": ["Windchill"],
                 },
             },
@@ -185,7 +186,7 @@ class ResumeProjectParsingTests(unittest.TestCase):
 
         self.assertEqual(values["Experience"], "10+ years")
         self.assertEqual(
-            values["Core Stack"], "JavaScript, React.js, HTML, Windchill"
+            values["Core Stack"], "Windchill, Java, Javascript, React.js"
         )
 
     def test_keeps_table_columns_separate_when_extracting_projects_and_skills(self):
