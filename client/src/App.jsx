@@ -415,11 +415,11 @@ function App() {
           {professionalProjects.length > 0 && (
             <div className="mb-8">
               {projectFilter === 'All' && <h3 className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Professional work</h3>}
-              <div className="grid gap-5">
+              <div className="columns-1 gap-5 xl:columns-2">
                 {professionalProjects.map((project, index) => renderProjectCard(
                   project,
                   index,
-                  'group flex flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30'
+                  'group mb-5 inline-block w-full break-inside-avoid rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 align-top shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30'
                 ))}
               </div>
             </div>
@@ -431,7 +431,7 @@ function App() {
                 {personalProjects.map((project, index) => renderProjectCard(
                   project,
                   index,
-                  'group mb-5 inline-flex w-full break-inside-avoid flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30'
+                  'group mb-5 inline-block w-full break-inside-avoid rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 align-top shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30'
                 ))}
               </div>
             </div>
