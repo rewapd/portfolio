@@ -1,0 +1,196 @@
+{
+  "name": "Rewa Prasad",
+  "role": "Software Developer",
+  "headline": "Product-minded software developer specializing in Windchill customization, enterprise workflow automation, and modern web interfaces.",
+  "summary": "Software Developer with 9+ years of experience designing, developing, and deploying enterprise solutions across manufacturing, banking, and automation domains. Skilled in Windchill customization, Java, Spring Boot, React, and RPA implementations with a strong focus on user experience, process optimization, and scalable delivery.",
+  "contact": {
+    "location": "Megapolis Serenity, Hinjewadi Phase 3, Pune - 411057",
+    "phone": "+91 7063470203",
+    "email": "rewa104@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/rewa-prasad-653397a3/"
+  },
+  "metrics": [
+    {
+      "label": "Experience",
+      "value": "9+ Years"
+    },
+    {
+      "label": "Core Stack",
+      "value": "Windchill, React, Java"
+    },
+    {
+      "label": "Certifications",
+      "value": "6"
+    },
+    {
+      "label": "Focus",
+      "value": "Enterprise Systems"
+    }
+  ],
+  "experiences": [
+    {
+      "company": "Tata Consultancy Services",
+      "location": "Pune",
+      "role": "Assistant Consultant",
+      "duration": "July 2022 - Present",
+      "type": "Software Developer",
+      "highlights": [
+        "Collaborated with solution architects and business analysts to gather requirements and translate them into technical design and implementation.",
+        "Worked extensively with PDMLink, PartsLink, Windchill customization, document management, and Oracle Fusion integrations.",
+        "Implemented change management workflows for change notices, change activities, and custom change object templates.",
+        "Developed custom validators, user pickers, data utilities, and lifecycle rules to streamline manufacturing data processing.",
+        "Built a React.js dashboard for PDMLoader validation with upload handling, business-rule checks, file processing, and downloadable ZIP reports.",
+        "Used Git, Jira, Azure Boards, and Rally for sprint and task tracking."
+      ]
+    },
+    {
+      "company": "Infosys Ltd",
+      "location": "Mysore, Amsterdam",
+      "role": "Senior Associate Consultant",
+      "duration": "Feb 2016 - June 2022",
+      "type": "RPA Developer",
+      "highlights": [
+        "Built and optimized Kofax RPA robots for banking processes, integrating with Outlook mailbox via Microsoft Graph API and business applications.",
+        "Created Splunk dashboards to monitor robot performance, incidents, and production issues, enabling smarter operational responses.",
+        "Carried out load testing and root-cause analysis to ensure high performance and minimal disruption to business processes.",
+        "Worked in Agile ceremonies and acted as Scrum Master to improve team coordination and delivery flow.",
+        "Developed Java modules for archive communication and document retention using Nuxeo, Hadoop, and related backend services."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Windchill Developer",
+      "company": "Tata Consultancy Services Ltd",
+      "period": "Jul 2022 - Present",
+      "stack": [
+        "Windchill",
+        "React.js",
+        "Java",
+        "Oracle Fusion"
+      ],
+      "description": "Enterprise manufacturing platform development focused on document control, part classification, lifecycle workflows, ACL management, and custom utility dashboards.",
+      "achievements": [
+        "Implemented change management design, custom workflows, and lifecycle templates for manufacturing operations.",
+        "Managed types, attributes, lifecycle states, export/import utilities, and document/product templates.",
+        "Developed runtime-driven dropdown generation, custom global attribute pickers, and validation dashboards for bulk data loading.",
+        "Created REST APIs and backend logic to support UI-driven validation of large files with ZIP report generation."
+      ]
+    },
+    {
+      "name": "usePopCorn",
+      "link": "https://rewapd.github.io/usePopCorn/",
+      "stack": [
+        "JavaScript",
+        "React.js",
+        "LocalStorage"
+      ],
+      "description": "Movie discovery application with search, ratings, watched list management, and persistent user state.",
+      "achievements": [
+        "Built search and watchlist flows using custom hooks, state management, and fetch-based API consumption.",
+        "Included rating and removal actions to create a clean user-driven movie dashboard."
+      ]
+    },
+    {
+      "name": "Forkify",
+      "link": "https://forkify-rewa.netlify.app/",
+      "stack": [
+        "JavaScript",
+        "MVC",
+        "LocalStorage"
+      ],
+      "description": "Recipe discovery platform offering search, bookmarks, ingredient adjustment, and paginated browsing.",
+      "achievements": [
+        "Implemented model-view-controller design to structure recipe search and state updates.",
+        "Added bookmark persistence, dynamic ingredient scaling, and asynchronous data handling with fetch APIs."
+      ]
+    },
+    {
+      "name": "FastPizza",
+      "link": "https://pizzafast-co.netlify.app/",
+      "stack": [
+        "React.js",
+        "React Router",
+        "Redux",
+        "Tailwind CSS"
+      ],
+      "description": "Pizza ordering interface with cart, quantity controls, geolocation-based order flow, and checkout experience.",
+      "achievements": [
+        "Built a modern storefront flow with cart management, quantity updates, and order form handling.",
+        "Integrated Redux state control and geolocation-driven UX, plus a polished UI with Tailwind styling."
+      ]
+    }
+  ],
+  "skills": {
+    "frontend": [
+      "JavaScript",
+      "React.js",
+      "HTML",
+      "CSS"
+    ],
+    "backend": [
+      "Java",
+      "Spring Boot"
+    ],
+    "database": [
+      "SQL"
+    ],
+    "tools": [
+      "Windchill",
+      "Eclipse",
+      "IntelliJ IDEA",
+      "VS Code",
+      "STS",
+      "Jenkins",
+      "ServiceNow",
+      "Splunk",
+      "Jira",
+      "Azure Boards",
+      "GitHub",
+      "Kofax TotalAgility",
+      "Kofax Kapow"
+    ],
+    "rpa": [
+      "Kofax RPA",
+      "Automation Design",
+      "Performance Monitoring"
+    ]
+  },
+  "certifications": [
+    "Udemy Certified - Java DS & Algo",
+    "Udemy Certified - React.js",
+    "Microsoft Azure Fundamentals",
+    "Infosys Certified Agile Developer",
+    "Infosys Certified DevOps Professional",
+    "Microsoft Azure AI Fundamentals"
+  ],
+  "awards": [
+    "Innovation Superstar Award - For outstanding contribution",
+    "Insta Award - For quickly taking up issues and additional responsibilities",
+    "Table Tennis Tournament - Secured 1st position"
+  ],
+  "education": [
+    {
+      "school": "Haldia Institute of Technology, Haldia",
+      "degree": "B.Tech",
+      "field": "Instrumentation and Control Engineering",
+      "period": "July 2011 - June 2015",
+      "gpa": "GPA: 8.40/10"
+    },
+    {
+      "school": "Mother Khazani Convent School, Delhi",
+      "degree": "Higher Secondary",
+      "field": "Physics, Chemistry and Maths",
+      "period": "April 2009 - March 2011"
+    },
+    {
+      "school": "JawaharLal Nehru Memorial Senior Secondary School, Dhanbad",
+      "degree": "Senior Secondary",
+      "period": "April 2008 - March 2009"
+    }
+  ],
+  "languages": [
+    "Hindi",
+    "English"
+  ]
+}
