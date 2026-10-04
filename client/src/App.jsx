@@ -140,6 +140,15 @@ function App() {
         .map((detail) => detail?.trim())
         .filter(Boolean)
     )];
+    const contentWeight = projectDetails.reduce((total, detail) => total + detail.length, 0);
+    const shapeSeed = [...project.name].reduce((total, character) => total + character.charCodeAt(0), index);
+    const contentScale = Math.min((contentWeight + projectDetails.length * 36) / 1200, 1);
+    const horizontalRadii = Array.from({ length: 4 }, (_, corner) => (
+      2.4 + contentScale * 2.2 + ((shapeSeed + corner * 3) % 5) * 0.55
+    ));
+    const verticalRadii = Array.from({ length: 4 }, (_, corner) => (
+      1.9 + contentScale * 1.4 + ((shapeSeed + corner * 2) % 4) * 0.4
+    ));
 
     return (
       <motion.article
@@ -149,6 +158,9 @@ function App() {
       viewport={{ once: true, amount: 0.12 }}
       transition={{ delay: index * 0.08 }}
       className={className}
+      style={{
+        borderRadius: `${horizontalRadii.map((radius) => `${radius.toFixed(2)}rem`).join(' ')} / ${verticalRadii.map((radius) => `${radius.toFixed(2)}rem`).join(' ')}`,
+      }}
     >
       <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-start sm:gap-4">
         <div>

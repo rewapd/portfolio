@@ -373,6 +373,49 @@ class ResumeProjectParsingTests(unittest.TestCase):
             "1",
         )
 
+    def test_phone_extraction_ignores_linkedin_id_and_location_postcode(self):
+        content = [
+            "Rewa Prasad",
+            "Software Developer",
+            "https://www.linkedin.com/in/rewa-prasad-653397a3/",
+            "Pune - 411057",
+            "+91 7063470203",
+            "rewa104@gmail.com",
+            "PROJECTS",
+            "● Project Alpha [Acme Ltd]",
+            "○ Delivered a platform.",
+        ]
+        document = {
+            "body": {
+                "content": [
+                    {
+                        "paragraph": {
+                            "elements": [{"textRun": {"content": line + "\n"}}]
+                        }
+                    }
+                    for line in content
+                ]
+            }
+        }
+        projects = extract_projects(document)
+        existing = {
+            "name": "Rewa Prasad",
+            "role": "Software Developer",
+            "contact": {"phone": "0000000000"},
+            "metrics": [],
+            "projects": [],
+            "skills": {},
+            "certifications": [],
+            "awards": [],
+            "education": [],
+            "languages": [],
+            "experiences": [],
+        }
+
+        profile = extract_profile(document, existing, projects)
+
+        self.assertEqual(profile["contact"]["phone"], "+91 7063470203")
+
     def test_extracts_projects_from_google_docs_document_structure(self):
         document = {
             "body": {

@@ -689,8 +689,22 @@ def extract_profile(document, existing, projects):
     contact = dict(existing.get("contact", {}))
     all_text = "\n".join(lines)
     email_match = EMAIL.search(all_text)
-    phone_match = PHONE.search(
-        labeled.get("phone", "") or labeled.get("mobile", "") or all_text
+    phone_candidates = [
+        labeled.get("phone", ""),
+        labeled.get("mobile", ""),
+    ]
+    if not any(phone_candidates):
+        phone_candidates.extend(
+            line for line in header if not LINKEDIN.search(line) and not EMAIL.search(line)
+        )
+    phone_match = next(
+        (
+            match
+            for candidate in phone_candidates
+            if (match := PHONE.fullmatch(candidate))
+            and len(re.sub(r"\D", "", match.group(0))) >= 10
+        ),
+        None,
     )
     linkedin_match = LINKEDIN.search(all_text)
     if email_match:
