@@ -5,16 +5,92 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import fitz
+
 from scripts import sync_google_doc
 from scripts.sync_resume_projects import merge_projects, parse_project_section
 from scripts.sync_google_doc import (
     document_change_token,
+    extract_education,
     extract_profile,
     extract_projects,
+    extract_projects_from_pdf,
 )
 
 
 class ResumeProjectParsingTests(unittest.TestCase):
+    def test_extracts_work_and_personal_projects_line_by_line_from_pdf(self):
+        pdf = fitz.open()
+        page = pdf.new_page()
+        page.insert_text(
+            (36, 40),
+            "\n".join(
+                [
+                    "PROJECTS",
+                    "● Lead Engineer [Example Ltd] — Platform [Jan 2024-Present]",
+                    "○",
+                    "Built the platform.",
+                    "● Personal Projects [JavaScript, React.js]",
+                    "#1 : Movie Shelf – https://example.com/movies",
+                    "○",
+                    "Search movies.",
+                    "○",
+                    "Save ratings locally.",
+                    "#2 : Recipe Book – https://example.com/recipes",
+                    "○",
+                    "Find recipes.",
+                    "PROJECT NOTES",
+                    "Done",
+                ]
+            ),
+        )
+        pdf_data = pdf.tobytes()
+        pdf.close()
+
+        projects = extract_projects_from_pdf(pdf_data)
+
+        self.assertEqual(
+            [project["name"] for project in projects],
+            ["Lead Engineer", "Movie Shelf", "Recipe Book"],
+        )
+        self.assertEqual(projects[0]["company"], "Example Ltd")
+        self.assertEqual(projects[0]["achievements"], ["Built the platform."])
+        self.assertEqual(projects[1]["stack"], ["JavaScript", "React.js"])
+        self.assertEqual(projects[1]["link"], "https://example.com/movies")
+        self.assertEqual(
+            projects[1]["achievements"],
+            ["Search movies.", "Save ratings locally."],
+        )
+
+    def test_extracts_degrees_and_schools_without_course_fallback(self):
+        education = extract_education(
+            [
+                "Haldia Institute of Technology, Haldia — B.Tech",
+                "July 2011 - June 2015",
+                "Instrumentation and Control Engineering",
+                "GPA: 8.40/10",
+                "Mother Khazani Convent School, Delhi — Higher Secondary",
+                "April 2009 - March 2011",
+                "Physics, Chemistry and Maths",
+                "JawaharLal Nehru Memorial Senior Secondary School, Dhanbad — Senior",
+                "Secondary",
+                "April 2008 - March 2009",
+            ]
+        )
+
+        self.assertEqual(len(education), 3)
+        self.assertEqual(education[0]["degree"], "B.Tech")
+        self.assertEqual(
+            education[0]["school"], "Haldia Institute of Technology, Haldia"
+        )
+        self.assertEqual(education[1]["degree"], "Higher Secondary")
+        self.assertEqual(education[2]["degree"], "Senior Secondary")
+        self.assertEqual(
+            education[2]["school"],
+            "JawaharLal Nehru Memorial Senior Secondary School, Dhanbad",
+        )
+        self.assertNotIn("field", education[2])
+
     def test_document_change_token_uses_revision_or_content_hash(self):
         self.assertEqual(
             document_change_token({"revisionId": "rev-123", "body": {}}),

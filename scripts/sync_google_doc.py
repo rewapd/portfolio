@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "client/public/profile.json"
 RESUME_PATH = ROOT / "client/public/Rewa-Prasad-Resume.pdf"
 SYNC_STATE_PATH = ROOT / "scripts/.google-doc-sync-state.json"
-SYNC_PARSER_VERSION = 5
+SYNC_PARSER_VERSION = 6
 SCOPES = [
     "https://www.googleapis.com/auth/documents.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
@@ -256,6 +256,35 @@ def extract_projects(document):
     return projects
 
 
+def extract_projects_from_pdf(pdf_data):
+    pdf = fitz.open(stream=pdf_data, filetype="pdf")
+    try:
+        lines = [
+            clean_line(line)
+            for page in pdf
+            for line in page.get_text("text").splitlines()
+            if clean_line(line)
+        ]
+    finally:
+        pdf.close()
+
+    start = next(
+        (index for index, line in enumerate(lines) if line.upper() in {
+            "PROJECTS",
+            "PROJECTS & EXPERIENCE",
+            "PROJECT EXPERIENCE",
+        }),
+        None,
+    )
+    if start is None:
+        raise ValueError("Could not find the PROJECTS heading in the exported PDF.")
+
+    projects = parse_project_section(lines[start + 1 :])
+    if not projects:
+        raise ValueError("No projects were found in the exported PDF PROJECTS section.")
+    return projects
+
+
 def split_values(lines):
     values = []
     for line in content_lines(lines):
@@ -341,7 +370,7 @@ def extract_education(lines):
     current = None
     degree_pattern = re.compile(
         r"\b(?:B\.?Tech|B\.?E\.?|M\.?Tech|M\.?S\.?|B\.?Sc|M\.?Sc|"
-        r"Ph\.?D|Higher Secondary|Senior Secondary|Bachelor|Master|Diploma)\b",
+        r"Ph\.?D|Higher Secondary|Senior Secondary|Bachelor|Master|Diploma|Senior)\b",
         re.IGNORECASE,
     )
 
@@ -354,6 +383,8 @@ def extract_education(lines):
     for line in content_lines(lines):
         parts = [clean_line(part) for part in re.split(r"\s*[|;]\s*", line) if part.strip()]
         for part in parts:
+            if not part:
+                continue
             date_match = DATE_RANGE.search(part)
             gpa_match = re.search(r"\bGPA\s*:?\s*[\d.]+(?:\s*/\s*[\d.]+)?", part, re.I)
             degree_match = degree_pattern.search(part)
@@ -362,10 +393,39 @@ def extract_education(lines):
             )
             if is_school and (current is None or current.get("school")):
                 finish()
-                current = {"school": part}
+                school = part
+                degree = ""
+                school_with_degree = re.split(r"\s*[—–-]\s*", part, maxsplit=1)
+                if len(school_with_degree) == 2:
+                    school_part, degree_hint = school_with_degree
+                    school = school_part.strip(" ,:-")
+                    degree_hint = degree_hint.strip(" ,:-")
+                    if degree_hint:
+                        degree = degree_hint
+                    if re.search(r"\bSenior\s+Secondary\b", school_part, re.I):
+                        degree = "Senior Secondary"
+                    elif re.search(r"\bHigher\s+Secondary\b", school_part, re.I):
+                        degree = "Higher Secondary"
+                elif degree_match:
+                    degree = degree_match.group(0)
+                    school = part[: degree_match.start()].rstrip(" —–-,:")
+                    trailing = part[degree_match.end() :].strip(" ,:-")
+                    if trailing:
+                        degree = f"{degree} {trailing}"
+                elif re.search(r"[—–-]\s*Senior$", part, re.I):
+                    school = re.sub(r"[—–-]\s*Senior$", "", part, flags=re.I).strip()
+                    degree = "Senior"
+                current = {"school": school}
+                if degree:
+                    current["degree"] = degree
                 continue
             if current is None:
                 current = {}
+            if current.get("degree") in {"Senior", "Senior Secondary"} and re.fullmatch(
+                r"Secondary", part, re.I
+            ):
+                current["degree"] = "Senior Secondary"
+                continue
             if date_match:
                 current["period"] = date_match.group(0)
             if gpa_match:
@@ -737,8 +797,8 @@ def main():
             print("Google Doc revision is unchanged; the portfolio is already current.")
             return
 
-    projects = extract_projects(document)
     pdf_data = fetch_google_doc_pdf(session, document_id)
+    projects = extract_projects_from_pdf(pdf_data)
 
     profile = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
     profile = extract_profile(document, profile, projects)

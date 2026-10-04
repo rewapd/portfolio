@@ -15,8 +15,8 @@ PROJECTS_START = {"PROJECTS", "PROJECTS & EXPERIENCE", "PROJECT EXPERIENCE"}
 INVISIBLE = re.compile(r"[\u200b-\u200f\ufeff]")
 RESUME_URL = re.compile(r"https?://[^\s)]+", re.IGNORECASE)
 NUMBERED_PROJECT = re.compile(r"^#\s*\d+\s*[:.)-]\s*(.+)$")
-BULLET = re.compile(r"^[○◦o]\s*(.*)$")
-TOP_LEVEL = re.compile(r"^[●•]\s*(.*)$")
+BULLET = re.compile(r"^[○◦o·]\s*(.*)$")
+TOP_LEVEL = re.compile(r"^[●•·]\s*(.+)$")
 DATE_RANGE = re.compile(
     r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
     r"\s+\d{4}\s*[-–]\s*(?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
@@ -122,6 +122,7 @@ def parse_project_section(lines):
                 continue
 
             title = re.split(r"\s*\[|—|–", heading, maxsplit=1)[0].strip()
+            title = re.sub(r"[•·○◦]+$", "", clean(title)).strip()
             bracket_values = re.findall(r"\[([^\]]+)\]", heading)
             period = next(
                 (clean(value) for value in bracket_values if DATE_RANGE.search(value)),
@@ -137,7 +138,7 @@ def parse_project_section(lines):
             )
             url_match = RESUME_URL.search(heading)
             current = {
-                "name": clean(title),
+                "name": title,
                 "company": company,
                 "period": period,
                 "link": url_match.group(0).rstrip(".,") if url_match else "",
@@ -153,6 +154,7 @@ def parse_project_section(lines):
             url_match = RESUME_URL.search(details)
             name = details[: url_match.start()] if url_match else details
             name = re.sub(r"\s*[–—-]\s*$", "", name).strip()
+            name = re.sub(r"[•·○◦]+$", "", name).strip()
             current = {
                 "name": clean(name),
                 "company": "",

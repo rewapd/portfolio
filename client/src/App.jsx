@@ -132,6 +132,53 @@ function App() {
     if (projectFilter === 'Enterprise') return Boolean(project.company);
     return project.stack.some((item) => item.toLowerCase().includes(projectFilter.toLowerCase()));
   });
+  const professionalProjects = filteredProjects.filter((project) => project.company);
+  const personalProjects = filteredProjects.filter((project) => !project.company);
+  const renderProjectCard = (project, index, className) => (
+    <motion.article
+      key={project.name}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ delay: index * 0.08 }}
+      className={className}
+    >
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200/80">{project.company || 'Personal Build'}</p>
+          <h3 className="mt-2 text-xl font-bold text-white">{project.name}</h3>
+        </div>
+        {project.link && (
+          <a href={project.link} target="_blank" rel="noreferrer" className="rounded-full border border-white/10 bg-white/5 p-2 text-slate-200 transition hover:border-violet-400/40 hover:text-white">
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        )}
+      </div>
+      {project.period && <p className="mb-4 text-sm text-cyan-200">{project.period}</p>}
+      {project.description && <p className="mb-5 leading-7 text-slate-300">{project.description}</p>}
+
+      {project.stack.length > 0 && (
+        <div className="mb-5 flex flex-wrap gap-2">
+          {project.stack.map((tag) => (
+            <span key={tag} className="rounded-full border border-violet-400/30 bg-violet-500/10 px-2.5 py-1 text-xs text-violet-100">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {project.achievements.length > 0 && (
+        <ul className="space-y-3 text-sm leading-7 text-slate-300">
+          {project.achievements.map((achievement) => (
+            <li key={achievement} className="flex gap-3">
+              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
+              <span>{achievement}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </motion.article>
+  );
 
   return (
     <div className="min-h-screen bg-slate-950 text-white selection:bg-violet-500/40">
@@ -353,49 +400,30 @@ function App() {
             </div>
           </div>
 
-          <div className="columns-1 gap-6 xl:columns-2">
-            {filteredProjects.map((project, index) => (
-              <motion.article
-                key={project.name}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.12 }}
-                transition={{ delay: index * 0.08 }}
-                className="group mb-6 inline-flex w-full break-inside-avoid flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30"
-              >
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-violet-200/80">{project.company || 'Personal Build'}</p>
-                    <h3 className="mt-2 text-xl font-bold text-white">{project.name}</h3>
-                  </div>
-                  {project.link && (
-                    <a href={project.link} target="_blank" rel="noreferrer" className="rounded-full border border-white/10 bg-white/5 p-2 text-slate-200 transition hover:border-violet-400/40 hover:text-white">
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  )}
-                </div>
-                {project.period && <p className="mb-4 text-sm text-cyan-200">{project.period}</p>}
-                <p className="mb-5 leading-7 text-slate-300">{project.description}</p>
-
-                <div className="mb-5 flex flex-wrap gap-2">
-                  {project.stack.map((tag) => (
-                    <span key={tag} className="rounded-full border border-violet-400/30 bg-violet-500/10 px-2.5 py-1 text-xs text-violet-100">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <ul className="space-y-3 text-sm leading-7 text-slate-300">
-                  {project.achievements.map((achievement) => (
-                    <li key={achievement} className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500" />
-                      <span>{achievement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.article>
-            ))}
-          </div>
+          {professionalProjects.length > 0 && (
+            <div className="mb-8">
+              {projectFilter === 'All' && <h3 className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Professional work</h3>}
+              <div className="grid gap-5">
+                {professionalProjects.map((project, index) => renderProjectCard(
+                  project,
+                  index,
+                  'group flex flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30'
+                ))}
+              </div>
+            </div>
+          )}
+          {personalProjects.length > 0 && (
+            <div>
+              {projectFilter === 'All' && <h3 className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Personal projects</h3>}
+              <div className="columns-1 gap-5 xl:columns-2">
+                {personalProjects.map((project, index) => renderProjectCard(
+                  project,
+                  index,
+                  'group mb-5 inline-flex w-full break-inside-avoid flex-col rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition-colors hover:border-violet-300/30'
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         <section id="skills" className="mb-10 grid scroll-mt-28 gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -429,8 +457,8 @@ function App() {
             <div className="space-y-4">
               {profile.education.map((edu) => (
                 <div key={edu.school} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-sm font-semibold text-white">{edu.degree || 'Course'}</p>
-                  <p className="mt-1 text-slate-300">{edu.school}</p>
+                  <p className="text-sm font-semibold text-white">{edu.degree || edu.school}</p>
+                  {edu.degree && <p className="mt-1 text-slate-300">{edu.school}</p>}
                   {edu.field && <p className="mt-1 text-sm text-slate-400">{edu.field}</p>}
                   <p className="mt-2 text-xs uppercase tracking-[0.18em] text-violet-200/80">{edu.period}</p>
                   {edu.gpa && <p className="mt-2 text-sm text-cyan-200">{edu.gpa}</p>}
